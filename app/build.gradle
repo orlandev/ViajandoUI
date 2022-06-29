@@ -60,6 +60,9 @@ dependencies {
     //Material Icons Extended
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
+    //Material3
+    implementation "androidx.compose.material3:material3:$material3"
+
     // ViewModel
     api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
 
