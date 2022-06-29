@@ -3,7 +3,7 @@ buildscript {
         compileSdk = 32
         minSdk = 21
         targetSdk = 32
-        versionCode = 0
+        versionCode = 1
         versionName = "1.0.$versionCode-beta"
         compose_version = '1.2.0-rc02'
         material3 = '1.0.0-alpha13'
