@@ -19,16 +19,16 @@ sealed class NavRouter(
             resourceStringId = R.string.home
         )
 
-    object PerfilScreenRoute : NavRouter(
+    object ProfileScreenRoute : NavRouter(
         route = "profile",
         resourceDrawableId = R.drawable.profile_24,
         resourceStringId = R.string.profile
     )
 
-    object ReservationsScreenRoute : NavRouter(
-        route = "reservations",
-        resourceDrawableId = R.drawable.reservations,
-        resourceStringId = R.string.reservations
+    object BookingScreenRoute : NavRouter(
+        route = "booking",
+        resourceDrawableId = R.drawable.ic_booking,
+        resourceStringId = R.string.booking
     )
 
     object AboutScreenRoute : NavRouter(
