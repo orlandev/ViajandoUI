@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -38,9 +39,8 @@ fun NavGraph(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-
     var extendedButton by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
 
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
@@ -48,18 +48,32 @@ fun NavGraph(navController: NavHostController) {
     val state = TopAppBarScrollState(0f, 0f, 0f)
 
     val scrollBehavior = remember(decayAnimationSpec) {
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(decayAnimationSpec, state = state)
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+            state = state,
+            decayAnimationSpec = decayAnimationSpec
+        )
     }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            LargeTopAppBar(
+            MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
-                title = { Text(text = stringResource(id = R.string.app_name)) },
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                },
+                actions = {
+                    Icon(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        imageVector = Icons.Outlined.Share, contentDescription = stringResource(
+                            id = R.string.share_text_app_bar_description
+                        )
+                    )
+                },
                 navigationIcon = {
                     Icon(
                         Icons.Outlined.Menu,
+                        modifier = Modifier.padding(horizontal = 8.dp),
                         contentDescription = stringResource(id = R.string.menu_navicon_content_description)
                     )
                 }
@@ -79,7 +93,7 @@ fun NavGraph(navController: NavHostController) {
                     extendedButton = !extendedButton
                 }) {
                 Icon(Icons.Default.Bookmark, contentDescription = null)
-                if (scrollBehavior.state.contentOffset < 0) {
+                if (scrollBehavior.state.contentOffset > 0) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = stringResource(id = R.string.reserv))
                 }

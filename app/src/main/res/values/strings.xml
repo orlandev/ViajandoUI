@@ -7,4 +7,5 @@
     <string name="agencies">Agencias</string>
     <string name="reserv">Reservar</string>
     <string name="menu_navicon_content_description">Menu</string>
+    <string name="share_text_app_bar_description">Compartir</string>
 </resources>
