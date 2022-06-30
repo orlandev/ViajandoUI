@@ -2,7 +2,7 @@
     <string name="app_name">ViajandoUI</string>
     <string name="home">Inicio</string>
     <string name="profile">Mi Perfil</string>
-    <string name="booking">Mis Reservas</string>
+    <string name="booking">Reservas</string>
     <string name="about">Acerca de</string>
     <string name="agencies">Agencias</string>
 </resources>

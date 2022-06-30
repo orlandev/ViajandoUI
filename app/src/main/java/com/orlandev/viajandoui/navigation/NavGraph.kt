@@ -3,6 +3,8 @@ package com.orlandev.viajandoui.navigation
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +35,12 @@ fun NavGraph(navController: NavHostController) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(onClick = { /*TODO*/ }) {
+                Icon(Icons.Default.Bookmark, contentDescription = null)
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End,
         bottomBar =
         {
             NavigationBar {
