@@ -1,21 +1,21 @@
 package com.orlandev.viajandoui.navigation
 
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.screens.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,11 +33,37 @@ fun NavGraph(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
+
+    var extendedButton by remember {
+        mutableStateOf(false)
+    }
+
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = {
+            LargeTopAppBar(
+                title = { Text(text = stringResource(id = R.string.app_name)) },
+                navigationIcon = {
+                    Icon(
+                        Icons.Outlined.Menu,
+                        contentDescription = stringResource(id = R.string.menu_navicon_content_description)
+                    )
+                }
+            )
+        },
+
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
+            ExtendedFloatingActionButton(
+
+                onClick = {
+                    extendedButton = !extendedButton
+                }) {
                 Icon(Icons.Default.Bookmark, contentDescription = null)
+                if (extendedButton) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = stringResource(id = R.string.reserv))
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.End,

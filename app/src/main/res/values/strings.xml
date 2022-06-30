@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">ViajandoUI</string>
+    <string name="app_name">Viajando</string>
     <string name="home">Inicio</string>
     <string name="profile">Mi Perfil</string>
     <string name="booking">Reservas</string>
     <string name="about">Acerca de</string>
     <string name="agencies">Agencias</string>
+    <string name="reserv">Reservar</string>
+    <string name="menu_navicon_content_description">Menu</string>
 </resources>
