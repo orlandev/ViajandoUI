@@ -6,9 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import com.orlandev.viajandoui.navigation.NavGraph
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,15 +25,19 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
-                    Button(onClick = { /*TODO*/ }) {
-                        Text(text = "dfghjk")
-                    }
-
+                    ViajandoScreen()
                 }
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ViajandoScreen() {
+
+    val navController = rememberNavController()
+    NavGraph(navController = navController)
 }
 
 
