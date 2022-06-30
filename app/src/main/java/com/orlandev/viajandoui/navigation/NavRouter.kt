@@ -32,12 +32,14 @@ sealed class NavRouter(
     )
 
     object AboutScreenRoute : NavRouter(
-        route = "reservations",
+        route = "about",
         resourceDrawableId = R.drawable.about,
         resourceStringId = R.string.about
     )
 
     object AgenciesScreenRoute : NavRouter(
         route = "agencies",
+        resourceDrawableId = R.drawable.ic_agencies,
+        resourceStringId = R.string.agencies
     )
 }

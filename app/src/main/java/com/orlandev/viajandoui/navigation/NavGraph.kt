@@ -1,22 +1,23 @@
 package com.orlandev.viajandoui.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.orlandev.viajandoui.ui.screens.AgenciesScreen
+import com.orlandev.viajandoui.ui.screens.BookingScreen
+import com.orlandev.viajandoui.ui.screens.HomeScreen
+import com.orlandev.viajandoui.ui.screens.ProfileScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,18 +95,31 @@ fun NavGraph(navController: NavHostController) {
             ) {
                 HomeScreen(navController = navController)
             }
+
+
+            composable(
+                route = NavRouter.AgenciesScreenRoute.route,
+            ) {
+                AgenciesScreen(navController = navController)
+            }
+
+
+            composable(
+                route = NavRouter.BookingScreenRoute.route,
+            ) {
+                BookingScreen(navController = navController)
+            }
+
+            composable(
+                route = NavRouter.ProfileScreenRoute.route,
+            ) {
+                ProfileScreen(navController = navController)
+            }
+
+
         }
     }
 }
 
-@Composable
-fun HomeScreen(navController: NavController) {
-    DevScreen("Home")
-}
 
-@Composable
-fun DevScreen(screenName: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "$screenName en desarrollo.")
-    }
-}
+
