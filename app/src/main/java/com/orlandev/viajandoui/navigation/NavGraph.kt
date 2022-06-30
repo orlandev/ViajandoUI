@@ -88,6 +88,7 @@ fun NavGraph(navController: NavHostController) {
         floatingActionButtonPosition = FabPosition.End,
         bottomBar =
         {
+            //TODO ( ADD Show/Hide Scroll Behavior)
             NavigationBar {
                 itemsBottomBarItems.forEach { screen ->
                     NavigationBarItem(
