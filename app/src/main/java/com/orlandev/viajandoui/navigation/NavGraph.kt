@@ -14,21 +14,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.orlandev.viajandoui.ui.screens.AgenciesScreen
-import com.orlandev.viajandoui.ui.screens.BookingScreen
-import com.orlandev.viajandoui.ui.screens.HomeScreen
-import com.orlandev.viajandoui.ui.screens.ProfileScreen
+import com.orlandev.viajandoui.ui.screens.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavGraph(navController: NavHostController) {
 
     val itemsBottomBarItems = listOf(
-        NavRouter.HomeScreenRoute,
-        NavRouter.BookingScreenRoute,
         NavRouter.AgenciesScreenRoute,
-        NavRouter.AboutScreenRoute,
+        NavRouter.BookingScreenRoute,
+        NavRouter.HomeScreenRoute,
         NavRouter.ProfileScreenRoute,
+        NavRouter.AboutScreenRoute,
     )
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -116,6 +113,11 @@ fun NavGraph(navController: NavHostController) {
                 ProfileScreen(navController = navController)
             }
 
+            composable(
+                route = NavRouter.AboutScreenRoute.route,
+            ) {
+                AboutScreen(navController = navController)
+            }
 
         }
     }
