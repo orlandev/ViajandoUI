@@ -1,5 +1,9 @@
 package com.orlandev.viajandoui.navigation
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
@@ -7,6 +11,7 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,11 +43,19 @@ fun NavGraph(navController: NavHostController) {
         mutableStateOf(false)
     }
 
+    val decayAnimationSpec = rememberSplineBasedDecay<Float>()
+
+    val state = TopAppBarScrollState(0f, 0f, 0f)
+
+    val scrollBehavior = remember(decayAnimationSpec) {
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(decayAnimationSpec, state = state)
+    }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
+                scrollBehavior = scrollBehavior,
                 title = { Text(text = stringResource(id = R.string.app_name)) },
                 navigationIcon = {
                     Icon(
@@ -55,12 +68,18 @@ fun NavGraph(navController: NavHostController) {
 
         floatingActionButton = {
             ExtendedFloatingActionButton(
+                modifier = Modifier.animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
 
                 onClick = {
                     extendedButton = !extendedButton
                 }) {
                 Icon(Icons.Default.Bookmark, contentDescription = null)
-                if (extendedButton) {
+                if (scrollBehavior.state.contentOffset < 0) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = stringResource(id = R.string.reserv))
                 }
