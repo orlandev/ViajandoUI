@@ -8,4 +8,6 @@
     <string name="reserv">Reservar</string>
     <string name="menu_navicon_content_description">Menu</string>
     <string name="share_text_app_bar_description">Compartir</string>
+    <string name="app_description">Una app de SITRANS con información de VIAJERO.</string>
+    <string name="contact_support">Atención ala Población</string>
 </resources>

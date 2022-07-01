@@ -183,7 +183,7 @@ fun NavGraph(navController: NavHostController) {
             composable(
                 route = NavRouter.AboutScreenRoute.route,
             ) {
-                AboutScreen(navController = navController)
+                AboutScreen()
             }
 
         }
