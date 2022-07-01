@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,7 +24,6 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import com.orlandev.viajandoui.utils.LinePlaceholderShimmer
-import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -125,19 +123,11 @@ fun NewsItem(news: ViajandoNewsType) {
 @Composable
 fun CardNews(news: ViajandoNewsType.News, onClick: () -> Unit = {}) {
 
-    val dataLoadedSimulation = remember {
-        mutableStateOf(false)
-    }
 
     val loadingImage = remember {
         mutableStateOf(false)
     }
 
-    //Simaluation of data loading
-    LaunchedEffect(Unit) {
-        delay(1)
-        dataLoadedSimulation.value = true
-    }
 
     Card(
         modifier = Modifier
