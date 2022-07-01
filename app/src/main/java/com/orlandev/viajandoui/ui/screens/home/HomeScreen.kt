@@ -12,11 +12,13 @@ import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,8 +28,10 @@ import coil.compose.AsyncImage
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
+import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import com.orlandev.viajandoui.utils.LinePlaceholderShimmer
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hiltViewModel()) {
@@ -44,7 +48,8 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
             item {
                 Text(
                     modifier = Modifier.padding(horizontal = generalItemPadding),
-                    text = "Alerta SITRANS"
+                    text = stringResource(id = R.string.alert_sitrans_text),
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
             item {
@@ -87,26 +92,36 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardAlert(news: ViajandoNewsType.Alert, onClick: () -> Unit = {}) {
+    val loadingImage = remember {
+        mutableStateOf(true)
+    }
+
+    LaunchedEffect(Unit) {
+
+        //Simulando peticion a la base de datos
+        delay(2000)
+        loadingImage.value = false
+    }
+
+
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
+            .height(420.dp)
             .padding(16.dp)
             .clickable {
                 onClick()
             },
     ) {
-        val loadingImage = remember {
-            mutableStateOf(false)
-        }
+
         Column(
             modifier = Modifier
-                .height(250.dp)
-                .fillMaxWidth()
+                .fillMaxSize()
         ) {
             AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
+                    .height(220.dp)
                     .placeholder(
                         visible = loadingImage.value,
                         color = MaterialTheme.colorScheme.background,
@@ -118,52 +133,52 @@ fun CardAlert(news: ViajandoNewsType.Alert, onClick: () -> Unit = {}) {
                         ),
                     ),
 
-                onLoading = {
-                    loadingImage.value = true
-                },
-                onSuccess = {
-                    loadingImage.value = false
-                },
-                contentScale = ContentScale.Crop,
-                model = news.imageUrl, contentDescription = null
+                contentScale = ContentScale.FillBounds,
+                model = news.imageUrl.ifEmpty { R.drawable.alerta_viajando },
+                contentDescription = null
             )
-        }
+            Column(modifier = Modifier.fillMaxHeight().padding(8.dp), verticalArrangement = Arrangement.SpaceAround) {
+                if (loadingImage.value) {
+                    val height=12.dp
+                    LinePlaceholderShimmer(80.dp,height)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LinePlaceholderShimmer(minHeight = height)
+                    LinePlaceholderShimmer(minHeight = height)
+                    LinePlaceholderShimmer(minHeight = height)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LinePlaceholderShimmer(80.dp,height)
+                } else {
 
-        Column(modifier = Modifier.padding(8.dp)) {
-            if (loadingImage.value) {
-                LinePlaceholderShimmer(80.dp)
-                Spacer(modifier = Modifier.height(8.dp))
-                LinePlaceholderShimmer(130.dp)
-                LinePlaceholderShimmer(120.dp)
-                LinePlaceholderShimmer(160.dp)
-            } else {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        text = news.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        text = news.description, style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    text = news.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    text = news.description, style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+                    TextButton(onClick = {
+                        onClick()
+                    }) {
+                        Text(text = stringResource(id = R.string.see_more))
+                    }
 
-                TextButton(onClick = { /*TODO*/ }) {
-                    Text(text = "Ver más")
                 }
-
             }
         }
+
     }
 }
 

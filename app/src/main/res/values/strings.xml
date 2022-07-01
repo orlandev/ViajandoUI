@@ -20,4 +20,6 @@
     <string name="facebook_url">https://www.facebook.com/sitrans.cuba</string>
     <string name="twitter_url">https://twitter.com/sitranscuba</string>
     <string name="telegram_url">https://t.me/apkviajando</string>
+    <string name="see_more">Ver más</string>
+    <string name="alert_sitrans_text">Alerta SITRANS</string>
 </resources>

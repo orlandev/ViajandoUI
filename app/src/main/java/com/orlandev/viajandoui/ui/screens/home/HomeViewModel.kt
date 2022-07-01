@@ -8,29 +8,13 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor() : ViewModel() {
     val listOfNews = listOf<ViajandoNewsType>(
         ViajandoNewsType.Alert(
-            "Titulo 1",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                    "Sed euismod, urna eu tincidunt consectetur, nisi nisl " +
-                    "consequat nisl, eget consectetur nisl nisl euismod " +
-                    "nisl. Sed euismod, urna eu tincidunt consectetur, " +
-                    "nisi nisl consectetur nisl, eget consectetur nisl " +
-                    "nisl euismod nisl. Sed euismod, urna eu tincidunt " +
-                    "consectetur, nisi nisl consectetur nisl, eget " +
-                    "consectetur nisl nisl euismod nisl. Sed euismod, " +
-                    "urna eu tincidunt consectetur, nisi nisl consectetur " +
-                    "nisl, eget consectetur nisl nisl euismod nisl. Sed " +
-                    "euismod, urna eu tincidunt consectetur, nisi nisl " +
-                    "consectetur nisl, eget consectetur nisl nisl euismod " +
-                    "nisl. Sed euismod, urna eu tincidunt consectetur, " +
-                    "nisi nisl consectetur nisl, eget consectetur nisl " +
-                    "nisl euismod nisl. Sed euismod, urna eu tincidunt " +
-                    "consectetur, nisi nisl consectetur nisl, eget " +
-                    "consectetur nisl nisl euismod nisl. Sed euismod, " +
-                    "urna eu tincidunt consectetur, nisi nisl consectetur " +
-                    "nisl, eget consectetur nisl nisl euismod nisl. Sed " +
-                    "euismod,",
-
-            "https://source.unsplash.com/random/400×300"
+            "Alerta Viajando",
+            "Estimados usuarios de viajando, en esta época la empresa Viajero se encuentra vendiendo pasajes de temporada de verano por lo que se están experimentando pico de solicitudes a las 8:30 am lo que ocasiona congestión en la red.\n" +
+                    "La explicación técnica de lo que ocurre cuando a las 8:30 am, cuando los usuarios intentan seleccionar asientos disponibles y se queda cargando o no pueden seleccionarlos es:\n" +
+                    "A las 8:30 am se realizan un número exponencialmente superior de  conexiones con solicitudes de compra a los servidores para una disponibilidad de pasajes por la apk muy inferior, lo que ocasiona una congestión temporal en los servidores.\n" +
+                    "Las solicitudes que primero lleguen a los servidores de dispositivos que cuenten con la conexión más rápida y estable, son las que tendrán mayores posibilidades de comprar.\n" +
+                    "Tener una conexión rápida y estable no significa solo contar con buena cobertura.",
+            ""
         ),
         ViajandoNewsType.News(
             "Titulo 1",

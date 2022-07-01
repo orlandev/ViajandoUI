@@ -1,13 +1,12 @@
 package com.orlandev.viajandoui.utils
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
@@ -17,17 +16,19 @@ import kotlin.random.Random
 fun LinePlaceholderShimmer(
     maxWith: Dp = Dp(
         Random
-            .nextInt(90, 400)
+            .nextInt(90, 500)
             .toFloat()
-    )
+    ),
+    minHeight: Dp = 8.dp,
+    paddingValues: PaddingValues=PaddingValues(8.dp, 8.dp, 8.dp, 8.dp),
 ) {
 
     Box(
         modifier = Modifier
+            .height(minHeight)
             .width(
                 maxWith
             )
-            .height(8.dp)
             .placeholder(
                 visible = true,
                 color = androidx.compose.material3.MaterialTheme.colorScheme.background,
@@ -37,6 +38,6 @@ fun LinePlaceholderShimmer(
                         alpha = 0.6f
                     ),
                 ),
-            )
+            ).padding(paddingValues),
     )
 }
