@@ -53,7 +53,6 @@ fun NavGraph(navController: NavHostController) {
     }
 
     LaunchedEffect(scrollBehavior.state.offset) {
-
         delay(100)
         if (scrollBehavior.state.offset < 0f && expandeFabButtonState) {
             expandeFabButtonState = false
