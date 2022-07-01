@@ -1,10 +1,9 @@
 package com.orlandev.viajandoui.navigation
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.Menu
@@ -23,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.screens.*
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,11 +38,9 @@ fun NavGraph(navController: NavHostController) {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-
-    var extendedButton by remember {
+    var expandeFabButtonState by remember {
         mutableStateOf(true)
     }
-
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
 
     val state = TopAppBarScrollState(0f, 0f, 0f)
@@ -52,6 +50,16 @@ fun NavGraph(navController: NavHostController) {
             state = state,
             decayAnimationSpec = decayAnimationSpec
         )
+    }
+
+    LaunchedEffect(scrollBehavior.state.offset) {
+
+        delay(100)
+        if (scrollBehavior.state.offset < 0f && expandeFabButtonState) {
+            expandeFabButtonState = false
+        } else if (scrollBehavior.state.offset > -20f && !expandeFabButtonState) {
+            expandeFabButtonState = true
+        }
     }
 
     Scaffold(
@@ -82,22 +90,14 @@ fun NavGraph(navController: NavHostController) {
 
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                modifier = Modifier.animateContentSize(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        easing = LinearOutSlowInEasing
-                    )
-                ),
-
+                expanded = expandeFabButtonState,
+                icon = { Icon(Icons.Default.Bookmark, contentDescription = null) },
                 onClick = {
-                    extendedButton = !extendedButton
-                }) {
-                Icon(Icons.Default.Bookmark, contentDescription = null)
-                if (scrollBehavior.state.contentOffset > 0) {
-                    Spacer(modifier = Modifier.width(8.dp))
+
+                }, text = {
                     Text(text = stringResource(id = R.string.reserv))
                 }
-            }
+            )
         },
         floatingActionButtonPosition = FabPosition.End,
         bottomBar =
