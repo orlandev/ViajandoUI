@@ -1,6 +1,5 @@
 package com.orlandev.viajandoui.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,14 +42,14 @@ fun HomeScreen(navController: NavController) {
             "Descripcion 2",
             "description",
             "https://source.unsplash.com/random/300×200",
-            schedule = "12:00"
+            schedule = "12:00 PM - 4:00 PM"
         ),
         ViajandoNewsType.Event(
             "Evento 2",
             "Descripcion 3",
             "description",
             "https://source.unsplash.com/random/350×300",
-            schedule = "12:00"
+            schedule = "8:00 AM - 2:00 PM"
         ),
 
         ViajandoNewsType.News(
@@ -75,7 +73,7 @@ fun HomeScreen(navController: NavController) {
         ),
         ViajandoNewsType.Event(
             "Evento 3",
-            "Descripcion 5",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "description",
             "https://source.unsplash.com/random/300×250",
             schedule = "12:00"
@@ -162,30 +160,50 @@ fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
                 contentScale = ContentScale.Crop,
                 model = news.imageUrl, contentDescription = null
             )
-            Row(modifier = Modifier.background(Color.Blue).height(130.dp).fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Column(modifier = Modifier) {
+            Row(
+                modifier = Modifier
+                    .height(130.dp)
+                    .fillMaxWidth()
+                    .padding(8.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(8f),
+                    verticalArrangement = Arrangement.SpaceAround
+                ) {
                     if (loadingImage.value) {
                         LinePlaceholderShimmer(80.dp)
                         Spacer(modifier = Modifier.height(8.dp))
                         LinePlaceholderShimmer(130.dp)
 
                     } else {
+
                         Text(
-                            text = news.title, style = MaterialTheme.typography.titleMedium,
+                            text = news.title,
+                            style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+
                         Text(
                             text = news.subTitle, style = MaterialTheme.typography.titleSmall,
-                            maxLines = 1,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
+
+                        Text(
+                            text = news.schedule, style = MaterialTheme.typography.bodySmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+
                     }
                 }
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight().background(Color.Red)
+                        .fillMaxHeight()
                         .padding(horizontal = 8.dp), contentAlignment = Alignment.BottomEnd
                 ) {
                     Icon(imageVector = Icons.Default.Event, contentDescription = null)
