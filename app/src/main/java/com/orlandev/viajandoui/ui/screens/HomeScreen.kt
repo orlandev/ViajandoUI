@@ -3,11 +3,13 @@ package com.orlandev.viajandoui.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Newspaper
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -95,9 +97,44 @@ fun HomeScreen(navController: NavController) {
         )
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(listOfNews) { news ->
-            NewsItem(news = news)
+
+        item {
+            Text(text = "Alertas")
         }
+        item {
+            LazyRow{
+                items(listOfNews.filterIsInstance<ViajandoNewsType.Alert>()) { news ->
+                    Text(text = "sdfsdf")
+                }
+            }
+        }
+
+        item {
+            Text(text = "Noticias")
+        }
+
+        item {
+            LazyRow{
+                items(listOfNews.filterIsInstance<ViajandoNewsType.News>()) { news ->
+                    CardNews(news)
+                }
+            }
+        }
+
+        item {
+            Text(text = "Eventos")
+        }
+        items(listOfNews.filterIsInstance<ViajandoNewsType.Event>()) { event ->
+            CardEvents(event)
+        }
+
+        item {
+            Text(text = "Ventas")
+        }
+        items(listOfNews.filterIsInstance<ViajandoNewsType.Offer>()) { offer ->
+            CardOffers(offer)
+        }
+
     }
 }
 
@@ -105,15 +142,13 @@ fun HomeScreen(navController: NavController) {
 fun NewsItem(news: ViajandoNewsType) {
     when (news) {
         is ViajandoNewsType.News -> {
-
             CardNews(news)
-
         }
         is ViajandoNewsType.Event -> {
             CardEvents(news)
         }
         is ViajandoNewsType.Offer -> {
-            Text(text = news.title)
+            CardOffers(news = news)
         }
         is ViajandoNewsType.Alert -> TODO()
     }
@@ -122,6 +157,108 @@ fun NewsItem(news: ViajandoNewsType) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
+
+    val loadingImage = remember {
+        mutableStateOf(false)
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable {
+                onClick()
+            },
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(130.dp)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .placeholder(
+                        visible = loadingImage.value,
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(4.dp),
+                        highlight = PlaceholderHighlight.shimmer(
+                            highlightColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.6f
+                            ),
+                        ),
+                    ),
+
+                onLoading = {
+                    loadingImage.value = true
+                },
+                onSuccess = {
+                    loadingImage.value = false
+                },
+                contentScale = ContentScale.Crop,
+                model = news.imageUrl, contentDescription = null
+            )
+
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp), verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(8f),
+                    verticalArrangement = Arrangement.SpaceAround
+                ) {
+                    if (loadingImage.value) {
+                        LinePlaceholderShimmer(80.dp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LinePlaceholderShimmer(130.dp)
+
+                    } else {
+
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = news.title,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = news.subTitle, style = MaterialTheme.typography.titleSmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        Text(
+                            text = news.schedule, style = MaterialTheme.typography.bodySmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(horizontal = 8.dp), contentAlignment = Alignment.BottomEnd
+                ) {
+                    Icon(imageVector = Icons.Default.Event, contentDescription = null)
+                }
+            }
+        }
+    }
+
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardOffers(news: ViajandoNewsType.Offer, onClick: () -> Unit = {}) {
 
     val loadingImage = remember {
         mutableStateOf(false)
@@ -191,14 +328,6 @@ fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
-
-                        Text(
-                            text = news.schedule, style = MaterialTheme.typography.bodySmall,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-
                     }
                 }
                 Box(
@@ -206,7 +335,7 @@ fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
                         .fillMaxHeight()
                         .padding(horizontal = 8.dp), contentAlignment = Alignment.BottomEnd
                 ) {
-                    Icon(imageVector = Icons.Default.Event, contentDescription = null)
+                    Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
                 }
             }
         }
@@ -227,8 +356,8 @@ fun CardNews(news: ViajandoNewsType.News, onClick: () -> Unit = {}) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .fillMaxHeight().width(300.dp)
+            .padding(8.dp)
             .clickable {
                 onClick()
             },
