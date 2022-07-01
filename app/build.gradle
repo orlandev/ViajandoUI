@@ -80,6 +80,8 @@ dependencies {
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
     kapt 'com.google.dagger:hilt-android-compiler:2.40.5'
 
+    //Coil Image Loader Library
+    api "io.coil-kt:coil-compose:2.1.0"
 
     //Accompanist
     def accompanist_version="0.24.11-rc"
@@ -88,7 +90,7 @@ dependencies {
 
     // Se utilizaran mas adelante
     //implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
-    //implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
     //implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     //implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
     //implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
