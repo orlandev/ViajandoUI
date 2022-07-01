@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.screens.*
+import com.orlandev.viajandoui.ui.screens.home.HomeScreen
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)

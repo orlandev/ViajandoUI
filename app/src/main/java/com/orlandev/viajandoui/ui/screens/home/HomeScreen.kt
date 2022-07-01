@@ -1,4 +1,4 @@
-package com.orlandev.viajandoui.ui.screens
+package com.orlandev.viajandoui.ui.screens.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -29,83 +30,27 @@ import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import com.orlandev.viajandoui.utils.LinePlaceholderShimmer
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hiltViewModel()) {
 
-    val listOfNews = listOf<ViajandoNewsType>(
-        ViajandoNewsType.News(
-            "Titulo 1",
-            "Descripcion 1",
-            "description",
-            "https://source.unsplash.com/random/300×300"
-        ),
+    val generalItemPadding = 16.dp
 
-        ViajandoNewsType.Event(
-            "Evento 1",
-            "Descripcion 2",
-            "description",
-            "https://source.unsplash.com/random/300×200",
-            schedule = "12:00 PM - 4:00 PM"
-        ),
-        ViajandoNewsType.Event(
-            "Evento 2",
-            "Descripcion 3",
-            "description",
-            "https://source.unsplash.com/random/350×300",
-            schedule = "8:00 AM - 2:00 PM"
-        ),
+    val listOfNews = homeViewModel.listOfNews
 
-        ViajandoNewsType.News(
-            "Titulo 2",
-            "Descripcion 2",
-            "description",
-            "https://source.unsplash.com/random/320×300"
-        ),
-        ViajandoNewsType.News(
-            "Titulo 3",
-            "Descripcion 3",
-            "description",
-            "https://source.unsplash.com/random/300×310"
-        ),
 
-        ViajandoNewsType.Offer(
-            "Oferta 1",
-            "Descripcion 4",
-            "https://source.unsplash.com/random/200×200",
-            34.99
-        ),
-        ViajandoNewsType.Event(
-            "Evento 3",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "description",
-            "https://source.unsplash.com/random/300×250",
-            schedule = "12:00"
-        ),
-        ViajandoNewsType.Event(
-            "Evento 4",
-            "Descripcion 6",
-            "description",
-            "https://source.unsplash.com/random/300×315",
-            schedule = "12:00"
-        ),
-        ViajandoNewsType.Offer(
-            "Oferta 2",
-            "Descripcion 7",
-            "https://source.unsplash.com/random/300×325",
-            10.99
-        ),
-
-        )
-
+    val alert = listOfNews.filterIsInstance<ViajandoNewsType.Alert>().firstOrNull()
     LazyColumn(modifier = Modifier.fillMaxSize()) {
 
-        item {
-            Text(text = "Alertas")
-        }
-        item {
-            LazyRow{
-                items(listOfNews.filterIsInstance<ViajandoNewsType.Alert>()) { news ->
-                    Text(text = "sdfsdf")
-                }
+        if (alert != null) {
+            item {
+                Text(
+                    modifier = Modifier.padding(horizontal = generalItemPadding),
+                    text = "Alerta SITRANS"
+                )
+            }
+            item {
+
+                CardAlert(news = alert)
+
             }
         }
 
@@ -114,7 +59,7 @@ fun HomeScreen(navController: NavController) {
         }
 
         item {
-            LazyRow{
+            LazyRow {
                 items(listOfNews.filterIsInstance<ViajandoNewsType.News>()) { news ->
                     CardNews(news)
                 }
@@ -138,19 +83,87 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsItem(news: ViajandoNewsType) {
-    when (news) {
-        is ViajandoNewsType.News -> {
-            CardNews(news)
+fun CardAlert(news: ViajandoNewsType.Alert, onClick: () -> Unit = {}) {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable {
+                onClick()
+            },
+    ) {
+        val loadingImage = remember {
+            mutableStateOf(false)
         }
-        is ViajandoNewsType.Event -> {
-            CardEvents(news)
+        Column(
+            modifier = Modifier
+                .height(250.dp)
+                .fillMaxWidth()
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .placeholder(
+                        visible = loadingImage.value,
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(4.dp),
+                        highlight = PlaceholderHighlight.shimmer(
+                            highlightColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.6f
+                            ),
+                        ),
+                    ),
+
+                onLoading = {
+                    loadingImage.value = true
+                },
+                onSuccess = {
+                    loadingImage.value = false
+                },
+                contentScale = ContentScale.Crop,
+                model = news.imageUrl, contentDescription = null
+            )
         }
-        is ViajandoNewsType.Offer -> {
-            CardOffers(news = news)
+
+        Column(modifier = Modifier.padding(8.dp)) {
+            if (loadingImage.value) {
+                LinePlaceholderShimmer(80.dp)
+                Spacer(modifier = Modifier.height(8.dp))
+                LinePlaceholderShimmer(130.dp)
+                LinePlaceholderShimmer(120.dp)
+                LinePlaceholderShimmer(160.dp)
+            } else {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    text = news.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    text = news.description, style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TextButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Ver más")
+                }
+
+            }
         }
-        is ViajandoNewsType.Alert -> TODO()
     }
 }
 
@@ -356,7 +369,8 @@ fun CardNews(news: ViajandoNewsType.News, onClick: () -> Unit = {}) {
 
     Card(
         modifier = Modifier
-            .fillMaxHeight().width(300.dp)
+            .fillMaxHeight()
+            .width(300.dp)
             .padding(8.dp)
             .clickable {
                 onClick()
