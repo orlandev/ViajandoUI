@@ -17,4 +17,7 @@
     <string name="copyright">Todos los derechos reservados.</string>
     <string name="company_name">SITRANS - 2022</string>
     <string name="contact_email">viajero@viajero.transnet.cu</string>
+    <string name="facebook_url">https://www.facebook.com/sitrans.cuba</string>
+    <string name="twitter_url">https://twitter.com/sitranscuba</string>
+    <string name="telegram_url">https://t.me/apkviajando</string>
 </resources>
