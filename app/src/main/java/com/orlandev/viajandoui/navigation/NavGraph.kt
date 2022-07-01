@@ -36,6 +36,11 @@ fun NavGraph(navController: NavHostController) {
         NavRouter.AboutScreenRoute,
     )
 
+    val appName = stringResource(id = R.string.app_name)
+
+    var appBarTitle by remember {
+        mutableStateOf(appName)
+    }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     var expandeFabButtonState by remember {
@@ -67,7 +72,7 @@ fun NavGraph(navController: NavHostController) {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Text(text = stringResource(id = R.string.app_name))
+                    Text(text = appBarTitle)
                 },
                 actions = {
                     Icon(
@@ -157,6 +162,7 @@ fun NavGraph(navController: NavHostController) {
             composable(
                 route = NavRouter.HomeScreenRoute.route,
             ) {
+                appBarTitle = appName
                 HomeScreen(navController = navController)
             }
 
@@ -164,6 +170,9 @@ fun NavGraph(navController: NavHostController) {
             composable(
                 route = NavRouter.AgenciesScreenRoute.route,
             ) {
+                appBarTitle = NavRouter.AgenciesScreenRoute.resourceStringId?.let {
+                    stringResource(it)
+                } ?: appName
                 AgenciesScreen(navController = navController)
             }
 
@@ -171,18 +180,27 @@ fun NavGraph(navController: NavHostController) {
             composable(
                 route = NavRouter.BookingScreenRoute.route,
             ) {
+                appBarTitle = NavRouter.BookingScreenRoute.resourceStringId?.let {
+                    stringResource(it)
+                } ?: appName
                 BookingScreen(navController = navController)
             }
 
             composable(
                 route = NavRouter.ProfileScreenRoute.route,
             ) {
+                appBarTitle = NavRouter.ProfileScreenRoute.resourceStringId?.let {
+                    stringResource(it)
+                } ?: appName
                 ProfileScreen(navController = navController)
             }
 
             composable(
                 route = NavRouter.AboutScreenRoute.route,
             ) {
+                appBarTitle = NavRouter.AboutScreenRoute.resourceStringId?.let {
+                    stringResource(it)
+                } ?: appName
                 AboutScreen()
             }
 

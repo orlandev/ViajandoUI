@@ -53,7 +53,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ViajandoScreen() {
-
     val navController = rememberNavController()
     NavGraph(navController = navController)
 }
