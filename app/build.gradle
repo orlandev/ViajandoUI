@@ -60,14 +60,17 @@ dependencies {
     //Material Icons Extended
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
+    //ICON_PACK
+    implementation("br.com.devsrsouza.compose.icons.android:font-awesome:1.0.0")
+
     //Material3
     implementation "androidx.compose.material3:material3:$material3"
 
     // ViewModel
-    api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
 
     // ViewModel utilities for Compose
-    api("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
 
     // Hilt (Dependency Injection) add id 'dagger.hilt.android.plugin' and  id 'kotlin-kapt'
     //ADD IN PROJECT GRADLE classpath "com.google.dagger:hilt-android-gradle-plugin:2.35.1"

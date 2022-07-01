@@ -10,4 +10,11 @@
     <string name="share_text_app_bar_description">Compartir</string>
     <string name="app_description">Una app de SITRANS con información de VIAJERO.</string>
     <string name="contact_support">Atención a la Población</string>
+    <string name="contact_support_phone">78775644</string>
+    <string name="contact_support_phone2">78775645</string>
+    <string name="contact_support_phone3">78775646</string>
+    <string name="contact_schedule">8:00AM - 4:00PM</string>
+    <string name="copyright">Todos los derechos reservados.</string>
+    <string name="company_name">SITRANS - 2022</string>
+    <string name="contact_email">viajero@viajero.transnet.cu</string>
 </resources>
