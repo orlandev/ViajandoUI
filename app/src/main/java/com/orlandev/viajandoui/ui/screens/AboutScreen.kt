@@ -61,8 +61,7 @@ fun AboutScreen() {
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Image(
-                modifier = Modifier
-                    .weight(2f),
+                modifier = Modifier.size(100.dp),
                 contentScale = ContentScale.Crop,
                 painter = painterResource(id = R.drawable.app_logo),
                 contentDescription = null
