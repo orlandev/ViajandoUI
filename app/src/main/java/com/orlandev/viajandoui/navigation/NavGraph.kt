@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,9 +22,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orlandev.viajandoui.R
-import com.orlandev.viajandoui.ui.screens.*
+import com.orlandev.viajandoui.ui.screens.AboutScreen
+import com.orlandev.viajandoui.ui.screens.AgenciesScreen
+import com.orlandev.viajandoui.ui.screens.BookingScreen
+import com.orlandev.viajandoui.ui.screens.ProfileScreen
 import com.orlandev.viajandoui.ui.screens.home.HomeDetails
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
+import com.orlandev.viajandoui.utils.ShareIntent
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +64,9 @@ fun NavGraph(navController: NavHostController) {
         )
     }
 
+    val context = LocalContext.current
+    val sitransAppLink = stringResource(id = R.string.sitrans_viajando_apklis_link)
+
     LaunchedEffect(scrollBehavior.state.offset) {
         delay(100)
         if (scrollBehavior.state.offset < 0f && expandeFabButtonState) {
@@ -77,12 +85,20 @@ fun NavGraph(navController: NavHostController) {
                     Text(text = appBarTitle)
                 },
                 actions = {
-                    Icon(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        imageVector = Icons.Outlined.Share, contentDescription = stringResource(
-                            id = R.string.share_text_app_bar_description
+                    IconButton(onClick = {
+                        ShareIntent.shareIt(
+                            ctx = context,
+                            shareBy = appName,
+                            shareText = sitransAppLink
                         )
-                    )
+                    }) {
+                        Icon(
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            imageVector = Icons.Outlined.Share, contentDescription = stringResource(
+                                id = R.string.share_text_app_bar_description
+                            )
+                        )
+                    }
                 },
                 navigationIcon = {
                     Icon(

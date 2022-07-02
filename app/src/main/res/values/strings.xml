@@ -25,4 +25,5 @@
     <string name="sitrans_news_text">Noticias</string>
     <string name="sitrans_events_text">Eventos</string>
     <string name="sitrans_offers_text">Ofertas</string>
+    <string name="sitrans_viajando_apklis_link">Estoy usando esta app para gestionar mis pasajes. Te la recomiendo. \nhttps://apklis.cu/application/cu.sitrans.viajando</string>
 </resources>
