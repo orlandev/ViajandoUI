@@ -12,6 +12,7 @@ sealed class NavRouter(
 ) {
 
     object HomeDetailsScreenRoute : NavRouter("home_details")
+    object FaqScreenRoute : NavRouter("faq")
 
 
     //BottomBar sections

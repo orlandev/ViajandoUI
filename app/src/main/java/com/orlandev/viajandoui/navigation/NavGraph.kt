@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.*
@@ -27,6 +28,7 @@ import com.orlandev.viajandoui.ui.screens.AboutScreen
 import com.orlandev.viajandoui.ui.screens.AgenciesScreen
 import com.orlandev.viajandoui.ui.screens.BookingScreen
 import com.orlandev.viajandoui.ui.screens.ProfileScreen
+import com.orlandev.viajandoui.ui.screens.faq.FaqScreen
 import com.orlandev.viajandoui.ui.screens.home.HomeDetails
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
 import com.orlandev.viajandoui.utils.ShareIntent
@@ -86,6 +88,15 @@ fun NavGraph(navController: NavHostController) {
                     Text(text = appBarTitle)
                 },
                 actions = {
+                    IconButton(onClick = {
+
+                        navController.navigate(NavRouter.FaqScreenRoute.route)
+
+                    }) {
+                        Icon(Icons.Outlined.HelpOutline, contentDescription = null)
+                    }
+
+
                     IconButton(onClick = {
                         ShareIntent.shareIt(
                             ctx = context,
@@ -179,6 +190,13 @@ fun NavGraph(navController: NavHostController) {
         {
 
             composable(
+                route = NavRouter.FaqScreenRoute.route,
+            ) {
+                //appBarTitle = stringResource(id = )
+                FaqScreen()
+            }
+
+            composable(
                 route = NavRouter.HomeScreenRoute.route,
             ) {
                 appBarTitle = appName
@@ -186,12 +204,12 @@ fun NavGraph(navController: NavHostController) {
             }
 
             composable(
-                route = NavRouter.HomeDetailsScreenRoute.route+"/{id}",
+                route = NavRouter.HomeDetailsScreenRoute.route + "/{id}",
                 arguments = listOf(navArgument("id") { defaultValue = "" }),
-            ) {  backStackEntry ->
+            ) { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id") ?: "0"
                 appBarTitle = appName
-                HomeDetails(id=id)
+                HomeDetails(id = id)
             }
 
 
