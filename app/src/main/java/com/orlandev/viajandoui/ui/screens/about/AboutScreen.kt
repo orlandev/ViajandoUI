@@ -1,4 +1,4 @@
-package com.orlandev.viajandoui.ui.screens
+package com.orlandev.viajandoui.ui.screens.about
 
 import android.net.Uri
 import androidx.compose.foundation.Image

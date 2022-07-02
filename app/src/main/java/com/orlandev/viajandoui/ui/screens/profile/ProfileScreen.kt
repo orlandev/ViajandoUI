@@ -1,4 +1,4 @@
-package com.orlandev.viajandoui.ui.screens
+package com.orlandev.viajandoui.ui.screens.profile
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -6,6 +6,6 @@ import com.orlandev.viajandoui.utils.DevScreen
 
 
 @Composable
-fun AgenciesScreen(navController: NavController) {
-    DevScreen("Agencies")
+fun ProfileScreen(navController: NavController) {
+    DevScreen("Profile")
 }

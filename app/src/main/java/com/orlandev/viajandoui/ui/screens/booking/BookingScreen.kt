@@ -1,4 +1,4 @@
-package com.orlandev.viajandoui.ui.screens
+package com.orlandev.viajandoui.ui.screens.booking
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController

@@ -25,9 +25,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.screens.AboutScreen
-import com.orlandev.viajandoui.ui.screens.AgenciesScreen
-import com.orlandev.viajandoui.ui.screens.BookingScreen
-import com.orlandev.viajandoui.ui.screens.ProfileScreen
+import com.orlandev.viajandoui.ui.screens.agencies.AgenciesScreen
+import com.orlandev.viajandoui.ui.screens.booking.BookingScreen
+import com.orlandev.viajandoui.ui.screens.profile.ProfileScreen
 import com.orlandev.viajandoui.ui.screens.faq.FaqScreen
 import com.orlandev.viajandoui.ui.screens.home.HomeDetails
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
