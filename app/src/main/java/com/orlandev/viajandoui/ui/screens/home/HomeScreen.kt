@@ -101,14 +101,23 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         }
 
         item {
-            Text(
-                modifier = Modifier.padding(horizontal = generalItemPadding),
-                text = stringResource(id = R.string.sitrans_offers_text),
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-        items(listOfNews.filterIsInstance<ViajandoNewsType.Offer>()) { offer ->
-            CardOffers(offer)
+
+            Column(modifier=Modifier) {
+                Text(
+                    modifier = Modifier.padding(horizontal = generalItemPadding),
+                    text = stringResource(id = R.string.sitrans_offers_text),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                LazyRow {
+                    item { Spacer(modifier = Modifier.width(8.dp)) }
+                    items(listOfNews.filterIsInstance<ViajandoNewsType.Offer>()) { offer ->
+                        CardOffers(offer)
+                    }
+                }
+
+            }
+
         }
 
         item {
@@ -264,7 +273,6 @@ fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
 
             GradientEffect(backgroundColor = MaterialTheme.colorScheme.background)
 
-
             if (loadingImage.value) {
                 Box(
                     modifier = Modifier
@@ -320,21 +328,70 @@ fun CardOffers(news: ViajandoNewsType.Offer, onClick: () -> Unit = {}) {
     val loadingImage = remember {
         mutableStateOf(false)
     }
-
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .fillMaxHeight()
+            .width(180.dp)
+            .padding(8.dp)
             .clickable {
+
                 onClick()
             },
     ) {
 
-        Row(modifier = Modifier) {
-            AsyncImage(
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(130.dp)
+                .placeholder(
+                    visible = loadingImage.value,
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(4.dp),
+                    highlight = PlaceholderHighlight.shimmer(
+                        highlightColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                            alpha = 0.6f
+                        ),
+                    ),
+                ),
+
+            onLoading = {
+                loadingImage.value = true
+            },
+            onSuccess = {
+                loadingImage.value = false
+            },
+            contentScale = ContentScale.Crop,
+            model = news.imageUrl, contentDescription = null
+        )
+        Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier) {
+                if (loadingImage.value) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    LinePlaceholderShimmer(80.dp, minHeight = 10.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    LinePlaceholderShimmer(80.dp, minHeight = 10.dp)
+
+                } else {
+                    Text(
+                        text = news.title, style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "$${news.price}", style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+            Box(
                 modifier = Modifier
-                    .size(130.dp)
-                    .placeholder(
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp), contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(
+                    modifier = Modifier.placeholder(
                         visible = loadingImage.value,
                         color = MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(4.dp),
@@ -343,72 +400,11 @@ fun CardOffers(news: ViajandoNewsType.Offer, onClick: () -> Unit = {}) {
                                 alpha = 0.6f
                             ),
                         ),
-                    ),
-
-                onLoading = {
-                    loadingImage.value = true
-                },
-                onSuccess = {
-                    loadingImage.value = false
-                },
-                contentScale = ContentScale.Crop,
-                model = news.imageUrl, contentDescription = null
-            )
-            Row(
-                modifier = Modifier
-                    .height(130.dp)
-                    .fillMaxWidth()
-                    .padding(8.dp), verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(8f),
-                    verticalArrangement = Arrangement.SpaceAround
-                ) {
-                    if (loadingImage.value) {
-                        LinePlaceholderShimmer(80.dp)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        LinePlaceholderShimmer(130.dp)
-
-                    } else {
-
-                        Text(
-                            text = news.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-                        Text(
-                            text = news.subTitle, style = MaterialTheme.typography.titleSmall,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(horizontal = 8.dp), contentAlignment = Alignment.BottomEnd
-                ) {
-                    Icon(
-                        modifier = Modifier.placeholder(
-                            visible = loadingImage.value,
-                            color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(4.dp),
-                            highlight = PlaceholderHighlight.shimmer(
-                                highlightColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
-                                    alpha = 0.6f
-                                ),
-                            ),
-                        ), imageVector = Icons.Default.ShoppingCart, contentDescription = null
-                    )
-                }
+                    ), imageVector = Icons.Default.ShoppingCart, contentDescription = null
+                )
             }
         }
     }
-
 }
 
 

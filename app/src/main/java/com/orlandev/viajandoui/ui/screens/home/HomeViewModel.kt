@@ -59,7 +59,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         ),
 
         ViajandoNewsType.Offer(
-            "Oferta 1",
+            "Lapiceros",
             "Descripcion 4",
             "https://source.unsplash.com/random/200×200",
             34.99
@@ -79,10 +79,23 @@ class HomeViewModel @Inject constructor() : ViewModel() {
             schedule = "12:00"
         ),
         ViajandoNewsType.Offer(
-            "Oferta 2",
+            "Libretas",
             "Descripcion 7",
             "https://source.unsplash.com/random/300×325",
             10.99
+        ),
+
+        ViajandoNewsType.Offer(
+            "Hojas A4",
+            "Descripcion 7",
+            "https://source.unsplash.com/random/300×335",
+            2.99
+        ),
+        ViajandoNewsType.Offer(
+            "Hojas Carta",
+            "Descripcion 7",
+            "https://source.unsplash.com/random/300×346",
+            3.99
         ),
 
         )
