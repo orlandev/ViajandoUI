@@ -26,6 +26,7 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.orlandev.viajandoui.R
+import com.orlandev.viajandoui.navigation.NavRouter
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import com.orlandev.viajandoui.utils.GradientEffect
 import com.orlandev.viajandoui.utils.LinePlaceholderShimmer
@@ -59,7 +60,10 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    CardAlert(news = alert)
+                    CardAlert(news = alert) {
+                        homeViewModel.onSetViajandoNewsSelected(alert)
+                        navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                    }
                 }
 
             }
@@ -76,7 +80,10 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                 LazyRow {
                     item { Spacer(modifier = Modifier.width(8.dp)) }
                     items(listOfNews.filterIsInstance<ViajandoNewsType.News>()) { news ->
-                        CardNews(news)
+                        CardNews(news) {
+                            homeViewModel.onSetViajandoNewsSelected(news)
+                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                        }
                     }
                 }
             }
@@ -94,7 +101,10 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                 LazyRow {
                     item { Spacer(modifier = Modifier.width(8.dp)) }
                     items(listOfNews.filterIsInstance<ViajandoNewsType.Event>()) { event ->
-                        CardEvents(event)
+                        CardEvents(event) {
+                            homeViewModel.onSetViajandoNewsSelected(event)
+                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                        }
                     }
                 }
             }
@@ -112,18 +122,18 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                 LazyRow {
                     item { Spacer(modifier = Modifier.width(8.dp)) }
                     items(listOfNews.filterIsInstance<ViajandoNewsType.Offer>()) { offer ->
-                        CardOffers(offer)
+                        CardOffers(offer) {
+                            homeViewModel.onSetViajandoNewsSelected(offer)
+                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                        }
                     }
                 }
-
             }
-
         }
 
         item {
             Spacer(Modifier.height(80.dp))
         }
-
     }
 }
 
@@ -147,10 +157,7 @@ fun CardAlert(news: ViajandoNewsType.Alert, onClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .height(420.dp)
-            .padding(16.dp)
-            .clickable {
-                onClick()
-            },
+            .padding(16.dp),
     ) {
 
         Column(
@@ -455,9 +462,11 @@ fun CardNews(news: ViajandoNewsType.News, onClick: () -> Unit = {}) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier) {
                 if (loadingImage.value) {
-                    LinePlaceholderShimmer(80.dp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LinePlaceholderShimmer()
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LinePlaceholderShimmer(80.dp, minHeight = 10.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    LinePlaceholderShimmer(maxWith = 130.dp, minHeight = 10.dp)
+                    Spacer(modifier = Modifier.height(4.dp))
 
                 } else {
                     Text(
@@ -505,25 +514,52 @@ fun CardNewsPreview() {
 }
 
 
-sealed class ViajandoNewsType(val title: String, val subTitle: String, val description: String) {
-    class News(title: String, subTitle: String, description: String, val imageUrl: String) :
-        ViajandoNewsType(title = title, subTitle = subTitle, description = description)
+sealed class ViajandoNewsType(
+    val title: String,
+    val subTitle: String,
+    val description: String,
+    val imageUrl: String
+) {
+    object NONE
+
+    class News(title: String, subTitle: String, description: String, imageUrl: String) :
+        ViajandoNewsType(
+            title = title,
+            subTitle = subTitle,
+            description = description,
+            imageUrl = imageUrl
+        )
 
     //Alertas enviadas por la compania viajando
-    class Alert(title: String, description: String, val imageUrl: String) :
-        ViajandoNewsType(title = title, subTitle = "", description = description)
+    class Alert(title: String, description: String, imageUrl: String) :
+        ViajandoNewsType(
+            title = title,
+            subTitle = "",
+            description = description,
+            imageUrl = imageUrl
+        )
 
     class Event(
         title: String,
         subTitle: String,
         description: String,
-        val imageUrl: String,
+        imageUrl: String,
         val schedule: String
     ) :
-        ViajandoNewsType(title = title, subTitle = subTitle, description = description)
+        ViajandoNewsType(
+            title = title,
+            subTitle = subTitle,
+            description = description,
+            imageUrl = imageUrl
+        )
 
-    class Offer(title: String, description: String, val imageUrl: String, val price: Double) :
-        ViajandoNewsType(title = title, subTitle = "", description = description)
+    class Offer(title: String, description: String, imageUrl: String, val price: Double) :
+        ViajandoNewsType(
+            title = title,
+            subTitle = "",
+            description = description,
+            imageUrl = imageUrl
+        )
 
 
 }

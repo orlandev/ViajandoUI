@@ -11,6 +11,9 @@ sealed class NavRouter(
     argument: String? = null
 ) {
 
+    object HomeDetailsScreenRoute : NavRouter("home_details")
+
+
     //BottomBar sections
     object HomeScreenRoute :
         NavRouter(

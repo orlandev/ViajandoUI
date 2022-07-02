@@ -1,17 +1,32 @@
 package com.orlandev.viajandoui.ui.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 import kotlin.random.Random
 
 @HiltViewModel
 class HomeViewModel @Inject constructor() : ViewModel() {
 
+    init {
+        Log.d("TestViewModel","HomeViewModel INIT CALLED")
+
+    }
+
     fun haveAlert(): Boolean {
         //Simula una alerta
-        return Random.nextInt(1,3)==2
+        return Random.nextInt(1, 3) == 2
     }
+
+    var currentViajandoNewsSelected = MutableStateFlow<ViajandoNewsType?>(null)
+        private set
+
+    fun onSetViajandoNewsSelected(news: ViajandoNewsType) {
+        currentViajandoNewsSelected.value = news
+    }
+
 
     val listOfNews = listOf<ViajandoNewsType>(
         ViajandoNewsType.Alert(

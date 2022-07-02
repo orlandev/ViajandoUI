@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.screens.*
+import com.orlandev.viajandoui.ui.screens.home.HomeDetails
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
 import kotlinx.coroutines.delay
 
@@ -165,6 +166,13 @@ fun NavGraph(navController: NavHostController) {
             ) {
                 appBarTitle = appName
                 HomeScreen(navController = navController)
+            }
+
+            composable(
+                route = NavRouter.HomeDetailsScreenRoute.route,
+            ) {
+                appBarTitle = appName
+                HomeDetails()
             }
 
 
