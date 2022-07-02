@@ -1,11 +1,12 @@
 package com.orlandev.viajandoui.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,17 +18,53 @@ import coil.compose.AsyncImage
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
+import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.utils.GradientEffect
 
 @Composable
-fun HomeDetails(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeDetails(viewModel: HomeViewModel = hiltViewModel(), id: String) {
 
-    val news = viewModel.currentViajandoNewsSelected.collectAsState()
+    Log.d("UUID", "PARAM $id")
+    val news = viewModel.listOfNews.firstOrNull() {
+        Log.d("UUID", "FILTER ${it.id}")
+        it.id == id
+    }
 
-    if (news.value != null) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            HomeDetailsHeader(title = news.value?.title, imageUrl = news.value?.imageUrl)
-            HomeDetailsBody(description = news.value?.description)
+    if (news != null) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            item {
+                HomeDetailsHeader(
+                    title = news.title,
+                    imageUrl = news.imageUrl
+                )
+            }
+
+            when (news) {
+                is ViajandoNewsType.Event -> {
+                    item {
+                        Text(
+                            modifier = Modifier.padding(start = 16.dp, top = 8.dp),
+                            text = news.schedule
+                        )
+                    }
+                }
+                is ViajandoNewsType.Offer -> {
+                    item {
+                        Text(
+                            modifier = Modifier.padding(start = 16.dp, top = 8.dp),
+                            text = "$${news.price}"
+                        )
+                    }
+                }
+            }
+
+            item {
+                HomeDetailsBody(description = news.description)
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(90.dp))
+            }
         }
     } else {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -50,7 +87,7 @@ fun HomeDetailsBody(description: String?) {
 }
 
 @Composable
-fun HomeDetailsHeader(title: String?, imageUrl: String?) {
+fun HomeDetailsHeader(title: String?, imageUrl: String) {
 
     val loadingImage = remember {
         mutableStateOf(false)
@@ -82,7 +119,7 @@ fun HomeDetailsHeader(title: String?, imageUrl: String?) {
                 loadingImage.value = false
             },
             contentScale = ContentScale.Crop,
-            model = imageUrl, contentDescription = null
+            model = imageUrl.ifEmpty { R.drawable.alerta_viajando }, contentDescription = null
         )
 
         GradientEffect(backgroundColor = MaterialTheme.colorScheme.background)

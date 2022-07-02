@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.screens.AboutScreen
 import com.orlandev.viajandoui.ui.screens.AgenciesScreen
@@ -185,10 +186,12 @@ fun NavGraph(navController: NavHostController) {
             }
 
             composable(
-                route = NavRouter.HomeDetailsScreenRoute.route,
-            ) {
+                route = NavRouter.HomeDetailsScreenRoute.route+"/{id}",
+                arguments = listOf(navArgument("id") { defaultValue = "" }),
+            ) {  backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id") ?: "0"
                 appBarTitle = appName
-                HomeDetails()
+                HomeDetails(id=id)
             }
 
 

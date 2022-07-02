@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -27,7 +26,6 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.navigation.NavRouter
-import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import com.orlandev.viajandoui.utils.GradientEffect
 import com.orlandev.viajandoui.utils.LinePlaceholderShimmer
 import kotlinx.coroutines.delay
@@ -61,8 +59,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     CardAlert(news = alert) {
-                        homeViewModel.onSetViajandoNewsSelected(alert)
-                        navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                        navController.navigate(NavRouter.HomeDetailsScreenRoute.route + "/${alert.id}")
                     }
                 }
 
@@ -81,8 +78,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                     item { Spacer(modifier = Modifier.width(8.dp)) }
                     items(listOfNews.filterIsInstance<ViajandoNewsType.News>()) { news ->
                         CardNews(news) {
-                            homeViewModel.onSetViajandoNewsSelected(news)
-                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route + "/${news.id}")
                         }
                     }
                 }
@@ -102,8 +98,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                     item { Spacer(modifier = Modifier.width(8.dp)) }
                     items(listOfNews.filterIsInstance<ViajandoNewsType.Event>()) { event ->
                         CardEvents(event) {
-                            homeViewModel.onSetViajandoNewsSelected(event)
-                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route + "/${event.id}")
                         }
                     }
                 }
@@ -123,8 +118,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                     item { Spacer(modifier = Modifier.width(8.dp)) }
                     items(listOfNews.filterIsInstance<ViajandoNewsType.Offer>()) { offer ->
                         CardOffers(offer) {
-                            homeViewModel.onSetViajandoNewsSelected(offer)
-                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route)
+                            navController.navigate(NavRouter.HomeDetailsScreenRoute.route + "/${offer.id}")
                         }
                     }
                 }
@@ -504,35 +498,27 @@ fun CardNews(news: ViajandoNewsType.News, onClick: () -> Unit = {}) {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun CardNewsPreview() {
-    ViajandoUITheme {
-        CardNews(ViajandoNewsType.News("Title", "Description", "Image", "Link"))
-    }
-}
-
-
 sealed class ViajandoNewsType(
+    val id: String,
     val title: String,
     val subTitle: String,
     val description: String,
     val imageUrl: String
 ) {
-    object NONE
-
-    class News(title: String, subTitle: String, description: String, imageUrl: String) :
+    class News(id: String, title: String, subTitle: String, description: String, imageUrl: String) :
         ViajandoNewsType(
+            id = id,
             title = title,
             subTitle = subTitle,
             description = description,
-            imageUrl = imageUrl
-        )
+            imageUrl = imageUrl,
+
+            )
 
     //Alertas enviadas por la compania viajando
-    class Alert(title: String, description: String, imageUrl: String) :
+    class Alert(id: String, title: String, description: String, imageUrl: String) :
         ViajandoNewsType(
+            id = id,
             title = title,
             subTitle = "",
             description = description,
@@ -540,21 +526,29 @@ sealed class ViajandoNewsType(
         )
 
     class Event(
-        title: String,
+        id: String, title: String,
         subTitle: String,
         description: String,
         imageUrl: String,
         val schedule: String
     ) :
         ViajandoNewsType(
+            id = id,
             title = title,
             subTitle = subTitle,
             description = description,
             imageUrl = imageUrl
         )
 
-    class Offer(title: String, description: String, imageUrl: String, val price: Double) :
+    class Offer(
+        id: String,
+        title: String,
+        description: String,
+        imageUrl: String,
+        val price: Double
+    ) :
         ViajandoNewsType(
+            id = id,
             title = title,
             subTitle = "",
             description = description,
