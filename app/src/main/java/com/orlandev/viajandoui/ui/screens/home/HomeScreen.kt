@@ -48,6 +48,10 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         if (alert != null && haveAlert) {
             item {
 
