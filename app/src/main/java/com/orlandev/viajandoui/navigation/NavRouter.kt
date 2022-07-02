@@ -12,6 +12,7 @@ sealed class NavRouter(
 ) {
 
     object HomeDetailsScreenRoute : NavRouter("home_details")
+    object NewBookingScreenRoute : NavRouter("new_booking")
     object FaqScreenRoute : NavRouter("faq")
 
 
