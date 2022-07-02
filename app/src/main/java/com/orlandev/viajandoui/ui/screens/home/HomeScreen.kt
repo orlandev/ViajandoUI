@@ -30,6 +30,7 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
+import com.orlandev.viajandoui.utils.GradientEffect
 import com.orlandev.viajandoui.utils.LinePlaceholderShimmer
 import kotlinx.coroutines.delay
 
@@ -42,14 +43,17 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
 
 
     val alert = listOfNews.filterIsInstance<ViajandoNewsType.Alert>().firstOrNull()
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
 
         if (alert != null) {
             item {
                 Text(
                     modifier = Modifier.padding(horizontal = generalItemPadding),
                     text = stringResource(id = R.string.alert_sitrans_text),
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             item {
@@ -60,29 +64,53 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         }
 
         item {
-            Text(text = "Noticias")
-        }
-
-        item {
-            LazyRow {
-                items(listOfNews.filterIsInstance<ViajandoNewsType.News>()) { news ->
-                    CardNews(news)
+            Column(modifier = Modifier) {
+                Text(
+                    modifier = Modifier.padding(horizontal = generalItemPadding),
+                    text = stringResource(id = R.string.sitrans_news_text),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                LazyRow {
+                    item { Spacer(modifier = Modifier.width(8.dp)) }
+                    items(listOfNews.filterIsInstance<ViajandoNewsType.News>()) { news ->
+                        CardNews(news)
+                    }
                 }
             }
         }
 
         item {
-            Text(text = "Eventos")
-        }
-        items(listOfNews.filterIsInstance<ViajandoNewsType.Event>()) { event ->
-            CardEvents(event)
+
+            Column(modifier = Modifier) {
+                Text(
+                    modifier = Modifier.padding(horizontal = generalItemPadding),
+                    text = stringResource(id = R.string.sitrans_events_text),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                LazyRow {
+                    item { Spacer(modifier = Modifier.width(8.dp)) }
+                    items(listOfNews.filterIsInstance<ViajandoNewsType.Event>()) { event ->
+                        CardEvents(event)
+                    }
+                }
+            }
         }
 
         item {
-            Text(text = "Ventas")
+            Text(
+                modifier = Modifier.padding(horizontal = generalItemPadding),
+                text = stringResource(id = R.string.sitrans_offers_text),
+                style = MaterialTheme.typography.titleMedium
+            )
         }
         items(listOfNews.filterIsInstance<ViajandoNewsType.Offer>()) { offer ->
             CardOffers(offer)
+        }
+
+        item {
+            Spacer(Modifier.height(80.dp))
         }
 
     }
@@ -137,16 +165,20 @@ fun CardAlert(news: ViajandoNewsType.Alert, onClick: () -> Unit = {}) {
                 model = news.imageUrl.ifEmpty { R.drawable.alerta_viajando },
                 contentDescription = null
             )
-            Column(modifier = Modifier.fillMaxHeight().padding(8.dp), verticalArrangement = Arrangement.SpaceAround) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(8.dp), verticalArrangement = Arrangement.SpaceAround
+            ) {
                 if (loadingImage.value) {
-                    val height=12.dp
-                    LinePlaceholderShimmer(80.dp,height)
+                    val height = 12.dp
+                    LinePlaceholderShimmer(80.dp, height)
                     Spacer(modifier = Modifier.height(8.dp))
                     LinePlaceholderShimmer(minHeight = height)
                     LinePlaceholderShimmer(minHeight = height)
                     LinePlaceholderShimmer(minHeight = height)
                     Spacer(modifier = Modifier.height(8.dp))
-                    LinePlaceholderShimmer(80.dp,height)
+                    LinePlaceholderShimmer(80.dp, height)
                 } else {
 
                     Text(
@@ -192,8 +224,9 @@ fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .height(140.dp)
+            .width(300.dp)
+            .padding(8.dp)
             .clickable {
                 onClick()
             },
@@ -201,8 +234,7 @@ fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(130.dp)
+                .fillMaxSize()
         ) {
             AsyncImage(
                 modifier = Modifier
@@ -228,55 +260,50 @@ fun CardEvents(news: ViajandoNewsType.Event, onClick: () -> Unit = {}) {
                 model = news.imageUrl, contentDescription = null
             )
 
+            GradientEffect(backgroundColor = MaterialTheme.colorScheme.background)
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp), verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(8f),
-                    verticalArrangement = Arrangement.SpaceAround
-                ) {
-                    if (loadingImage.value) {
-                        LinePlaceholderShimmer(80.dp)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        LinePlaceholderShimmer(130.dp)
 
-                    } else {
-
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = news.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = news.subTitle, style = MaterialTheme.typography.titleSmall,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-                        Text(
-                            text = news.schedule, style = MaterialTheme.typography.bodySmall,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-                    }
-                }
+            if (loadingImage.value) {
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(horizontal = 8.dp), contentAlignment = Alignment.BottomEnd
+                        .align(Alignment.BottomStart)
+                        .padding(8.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.Event, contentDescription = null)
+                    LinePlaceholderShimmer(80.dp)
                 }
+            } else {
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomStart)
+                        .padding(8.dp),
+                    text = news.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                Icon(
+                    modifier = Modifier.placeholder(
+                        visible = loadingImage.value,
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(4.dp),
+                        highlight = PlaceholderHighlight.shimmer(
+                            highlightColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.6f
+                            ),
+                        ),
+                    ), imageVector = Icons.Default.Event, contentDescription = null
+                )
             }
         }
     }
@@ -363,7 +390,18 @@ fun CardOffers(news: ViajandoNewsType.Offer, onClick: () -> Unit = {}) {
                         .fillMaxHeight()
                         .padding(horizontal = 8.dp), contentAlignment = Alignment.BottomEnd
                 ) {
-                    Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
+                    Icon(
+                        modifier = Modifier.placeholder(
+                            visible = loadingImage.value,
+                            color = MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(4.dp),
+                            highlight = PlaceholderHighlight.shimmer(
+                                highlightColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                    alpha = 0.6f
+                                ),
+                            ),
+                        ), imageVector = Icons.Default.ShoppingCart, contentDescription = null
+                    )
                 }
             }
         }
@@ -442,7 +480,18 @@ fun CardNews(news: ViajandoNewsType.News, onClick: () -> Unit = {}) {
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp), contentAlignment = Alignment.CenterEnd
             ) {
-                Icon(imageVector = Icons.Default.Newspaper, contentDescription = null)
+                Icon(
+                    modifier = Modifier.placeholder(
+                        visible = loadingImage.value,
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(4.dp),
+                        highlight = PlaceholderHighlight.shimmer(
+                            highlightColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.6f
+                            ),
+                        ),
+                    ), imageVector = Icons.Default.Newspaper, contentDescription = null
+                )
             }
         }
     }

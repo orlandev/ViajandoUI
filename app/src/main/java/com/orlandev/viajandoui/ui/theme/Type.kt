@@ -60,7 +60,7 @@ val typography = androidx.compose.material3.Typography(
     ),
     titleMedium = TextStyle(
         fontFamily = Roboto,
-        fontWeight = FontWeight.Black,
+        fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.1.sp,
