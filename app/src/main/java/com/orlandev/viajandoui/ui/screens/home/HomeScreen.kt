@@ -11,10 +11,7 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -41,24 +38,29 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
 
     val listOfNews = homeViewModel.listOfNews
 
-
     val alert = listOfNews.filterIsInstance<ViajandoNewsType.Alert>().firstOrNull()
+
+    val haveAlert by remember {
+        mutableStateOf(homeViewModel.haveAlert())
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        if (alert != null) {
-            item {
-                Text(
-                    modifier = Modifier.padding(horizontal = generalItemPadding),
-                    text = stringResource(id = R.string.alert_sitrans_text),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+        if (alert != null && haveAlert) {
             item {
 
-                CardAlert(news = alert)
+                Column(modifier = Modifier) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = generalItemPadding),
+                        text = stringResource(id = R.string.alert_sitrans_text),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    CardAlert(news = alert)
+                }
 
             }
         }
