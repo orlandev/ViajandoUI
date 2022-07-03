@@ -56,16 +56,18 @@ fun AboutScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight().padding(start = 18.dp, top = 16.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Image(
                 modifier = Modifier.size(100.dp),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillBounds,
                 painter = painterResource(id = R.drawable.app_logo),
                 contentDescription = null
             )
+
+            Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(5f), horizontalAlignment = Alignment.Start) {
                 Text(
                     text = stringResource(id = R.string.app_name),

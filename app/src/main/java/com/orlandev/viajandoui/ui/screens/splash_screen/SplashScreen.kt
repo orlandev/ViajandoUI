@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.orlandev.viajandoui.BuildConfig
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 
@@ -27,18 +28,24 @@ fun SplashScreen() {
 
             ) {
             Image(
-                modifier = Modifier.size(200.dp),
+                modifier = Modifier.size(100.dp),
                 painter = painterResource(id = R.drawable.app_logo),
                 contentDescription = "App Logo",
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillBounds,
             )
 
-            Text(
-                text = stringResource(id = R.string.app_name),
-                style = MaterialTheme.typography.titleMedium
-            )
+            Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = BuildConfig.VERSION_NAME,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
 
-            LinearProgressIndicator()
+            LinearProgressIndicator(modifier = Modifier.width(170.dp).height(1.dp))
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(25.dp)
