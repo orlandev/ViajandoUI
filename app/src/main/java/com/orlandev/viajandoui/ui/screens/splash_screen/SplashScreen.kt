@@ -7,6 +7,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -14,12 +15,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.orlandev.viajandoui.BuildConfig
 import com.orlandev.viajandoui.R
+import com.orlandev.viajandoui.navigation.NavRouter
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
+import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(navController: NavController?=null) {
+
+   /* LaunchedEffect(Unit)
+    {
+        delay(2000)
+        navController?.navigate(NavRouter.HomeScreenRoute.route)
+    }*/
+
+
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
         Column(
@@ -45,7 +57,11 @@ fun SplashScreen() {
                 )
             }
 
-            LinearProgressIndicator(modifier = Modifier.width(170.dp).height(1.dp))
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .width(170.dp)
+                    .height(1.dp)
+            )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(25.dp)
