@@ -32,6 +32,7 @@ import com.orlandev.viajandoui.ui.screens.home.HomeDetails
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
 import com.orlandev.viajandoui.ui.screens.new_booking.NewBookingScreen
 import com.orlandev.viajandoui.ui.screens.profile.ProfileScreen
+import com.orlandev.viajandoui.ui.screens.splash_screen.SplashScreen
 import com.orlandev.viajandoui.utils.ShareIntent
 import kotlinx.coroutines.delay
 
@@ -190,9 +191,15 @@ fun NavGraph(navController: NavHostController) {
                 .fillMaxSize()
                 .padding(it),
             navController = navController,
-            startDestination = NavRouter.HomeScreenRoute.route
+            startDestination = NavRouter.SplashScreen.route
         )
         {
+
+            composable(
+                route = NavRouter.SplashScreen.route,
+            ) {
+                SplashScreen()
+            }
 
             composable(
                 route = NavRouter.NewBookingScreenRoute.route,

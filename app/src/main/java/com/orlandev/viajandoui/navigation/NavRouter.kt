@@ -11,6 +11,7 @@ sealed class NavRouter(
     argument: String? = null
 ) {
 
+    object SplashScreen : NavRouter("splash_screen")
     object HomeDetailsScreenRoute : NavRouter("home_details")
     object NewBookingScreenRoute : NavRouter("new_booking")
     object FaqScreenRoute : NavRouter("faq")
