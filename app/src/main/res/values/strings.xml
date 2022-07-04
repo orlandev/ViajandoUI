@@ -27,4 +27,6 @@
     <string name="sitrans_offers_text">Ofertas</string>
     <string name="sitrans_viajando_apklis_link">Estoy usando esta app para gestionar mis pasajes. Te la recomiendo. \nhttps://apklis.cu/application/cu.sitrans.viajando</string>
     <string name="new_booking">Nueva Reserva</string>
+    <string name="hi_there">Hola!</string>
+    <string name="your_itinerary">A donde quieres ir?</string>
 </resources>
