@@ -11,9 +11,8 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.TripOrigin
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,16 +26,32 @@ import androidx.navigation.NavController
 import com.orlandev.viajandoui.R
 import kotlinx.coroutines.launch
 
+enum class PasajeSelection {
+    ORIGIN,
+    DESTINY
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hiltViewModel()) {
     val textColor = MaterialTheme.colorScheme.onBackground
 
+    val selection = rememberSaveable {
+        mutableStateOf(PasajeSelection.ORIGIN)
+    }
     val bottomSheetState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         bottomSheetState.bottomSheetState.collapse()
+    }
+
+    val (origin, setOrigin) = remember {
+        mutableStateOf("")
+    }
+
+    val (destiny, setDestiny) = remember {
+        mutableStateOf("")
     }
 
     BottomSheetScaffold(
@@ -49,6 +64,14 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
             LazyColumn {
                 items(500) {
                     Text(modifier = Modifier.clickable {
+
+                        if (selection.value == PasajeSelection.ORIGIN) {
+                            setOrigin("$it")
+
+                        } else {
+                            setDestiny("$it")
+                        }
+
                         scope.launch {
                             bottomSheetState.bottomSheetState.collapse()
                         }
@@ -102,13 +125,19 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        SelectorComp(text = "Origen") {
+                        SelectorComp(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
                             scope.launch {
+                                selection.value = PasajeSelection.ORIGIN
                                 bottomSheetState.bottomSheetState.expand()
                             }
                         }
                         Divider()
-                        SelectorComp(icon = Icons.Default.LocationOn, text = "Destino") {
+                        SelectorComp(icon = Icons.Default.LocationOn, text = destiny.ifEmpty {
+                            stringResource(
+                                id = R.string.destiny_text
+                            )
+                        }) {
+                            selection.value = PasajeSelection.DESTINY
                             scope.launch {
                                 bottomSheetState.bottomSheetState.expand()
                             }
@@ -121,6 +150,9 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                             .size(60.dp)
                             .align(Alignment.CenterEnd),
                         onClick = {
+
+                            setOrigin(destiny)
+                            setDestiny(origin)
 
                         }
 
