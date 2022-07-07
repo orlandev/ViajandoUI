@@ -1,7 +1,8 @@
 package com.orlandev.viajandoui.navigation
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,7 +68,7 @@ fun NavGraph(navController: NavHostController) {
         TopAppBarDefaults.pinnedScrollBehavior(
             state = state,
 
-        )
+            )
     }
 
     val context = LocalContext.current
@@ -87,200 +88,202 @@ fun NavGraph(navController: NavHostController) {
 
     val scope = rememberCoroutineScope()
 
-    if (showingSplashScreen.value) {
-        AnimatedVisibility(visible = showingSplashScreen.value) {
+    Crossfade(showingSplashScreen.value, animationSpec = tween(1000)) { state ->
+        if (state) {
+
             SplashScreen()
-        }
-    } else {
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    title = {
-                        Text(text = appBarTitle)
-                    },
-                    actions = {
-                        IconButton(onClick = {
 
-                            navController.navigate(NavRouter.FaqScreenRoute.route)
+        } else {
+            Scaffold(
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                topBar = {
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
+                        title = {
+                            Text(text = appBarTitle)
+                        },
+                        actions = {
+                            IconButton(onClick = {
 
-                        }) {
-                            Icon(Icons.Outlined.HelpOutline, contentDescription = null)
-                        }
+                                navController.navigate(NavRouter.FaqScreenRoute.route)
 
-                        IconButton(onClick = {
-                            ShareIntent.shareIt(
-                                ctx = context,
-                                shareBy = appName,
-                                shareText = sitransAppLink
-                            )
-                        }) {
-                            Icon(
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                                imageVector = Icons.Outlined.Share,
-                                contentDescription = stringResource(
-                                    id = R.string.share_text_app_bar_description
+                            }) {
+                                Icon(Icons.Outlined.HelpOutline, contentDescription = null)
+                            }
+
+                            IconButton(onClick = {
+                                ShareIntent.shareIt(
+                                    ctx = context,
+                                    shareBy = appName,
+                                    shareText = sitransAppLink
                                 )
-                            )
-                        }
-                    },
-                    navigationIcon = {
+                            }) {
+                                Icon(
+                                    modifier = Modifier.padding(horizontal = 8.dp),
+                                    imageVector = Icons.Outlined.Share,
+                                    contentDescription = stringResource(
+                                        id = R.string.share_text_app_bar_description
+                                    )
+                                )
+                            }
+                        },
+                        navigationIcon = {
 
-                        val isMainPages =
-                            itemsBottomBarItems.firstOrNull { it.route == currentDestination?.route }
+                            val isMainPages =
+                                itemsBottomBarItems.firstOrNull { it.route == currentDestination?.route }
 
-                        if (isMainPages != null) {
-                            IconButton(
-                                onClick = {
-                                    scope.launch {
-                                        Toast.makeText(
-                                            context,
-                                            "Abirir drawer -> En Desarrollo",
-                                            Toast.LENGTH_LONG
-                                        ).show()
+                            if (isMainPages != null) {
+                                IconButton(
+                                    onClick = {
+                                        scope.launch {
+                                            Toast.makeText(
+                                                context,
+                                                "Abirir drawer -> En Desarrollo",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
                                     }
-                                }
-                            ) {
-                                Icon(
-                                    Icons.Outlined.Menu,
-                                    modifier = Modifier.padding(horizontal = 8.dp),
-                                    contentDescription = stringResource(id = R.string.menu_navicon_content_description)
-                                )
-                            }
-                        } else {
-                            IconButton(
-                                onClick = {
-                                    navController.popBackStack()
-                                }
-                            ) {
-                                Icon(
-                                    Icons.Outlined.ArrowBack,
-                                    modifier = Modifier.padding(horizontal = 8.dp),
-                                    contentDescription = stringResource(id = R.string.menu_navicon_content_description)
-                                )
-                            }
-                        }
-                    }
-                )
-            },
-            bottomBar =
-            {
-                //TODO ( ADD Show/Hide Scroll Behavior)
-                NavigationBar {
-                    itemsBottomBarItems.forEach { screen ->
-                        NavigationBarItem(
-                            modifier = Modifier.fillMaxHeight(),
-                            alwaysShowLabel = false,
-                            icon = {
-                                screen.resourceDrawableId?.let {
+                                ) {
                                     Icon(
-                                        painterResource(id = it),
-                                        contentDescription =
-                                        if (screen.resourceStringId != null)
-                                            stringResource(
-                                                screen.resourceStringId
-                                            ) else ""
+                                        Icons.Outlined.Menu,
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        contentDescription = stringResource(id = R.string.menu_navicon_content_description)
                                     )
                                 }
-                            },
-                            label = {
-                                screen.resourceStringId?.let {
-                                    Text(stringResource(it))
-                                }
-                            },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    // Pop up to the start destination of the graph to
-                                    // avoid building up a large stack of destinations
-                                    // on the back stack as users select items
-                                    //popUpTo(navController.graph.findStartDestination().id) {
-                                    //     saveState = true
-                                    //}
-                                    // Avoid multiple copies of the same destination when
-                                    // reselecting the same item
-                                    launchSingleTop = true
-                                    // Restore state when reselecting a previously selected item
-                                    restoreState = true
+                            } else {
+                                IconButton(
+                                    onClick = {
+                                        navController.popBackStack()
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Outlined.ArrowBack,
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        contentDescription = stringResource(id = R.string.menu_navicon_content_description)
+                                    )
                                 }
                             }
-                        )
+                        }
+                    )
+                },
+                bottomBar =
+                {
+                    //TODO ( ADD Show/Hide Scroll Behavior)
+                    NavigationBar {
+                        itemsBottomBarItems.forEach { screen ->
+                            NavigationBarItem(
+                                modifier = Modifier.fillMaxHeight(),
+                                alwaysShowLabel = false,
+                                icon = {
+                                    screen.resourceDrawableId?.let {
+                                        Icon(
+                                            painterResource(id = it),
+                                            contentDescription =
+                                            if (screen.resourceStringId != null)
+                                                stringResource(
+                                                    screen.resourceStringId
+                                                ) else ""
+                                        )
+                                    }
+                                },
+                                label = {
+                                    screen.resourceStringId?.let {
+                                        Text(stringResource(it))
+                                    }
+                                },
+                                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                onClick = {
+                                    navController.navigate(screen.route) {
+                                        // Pop up to the start destination of the graph to
+                                        // avoid building up a large stack of destinations
+                                        // on the back stack as users select items
+                                        //popUpTo(navController.graph.findStartDestination().id) {
+                                        //     saveState = true
+                                        //}
+                                        // Avoid multiple copies of the same destination when
+                                        // reselecting the same item
+                                        launchSingleTop = true
+                                        // Restore state when reselecting a previously selected item
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
-            }
-        ) {
-            NavHost(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                navController = navController,
-                startDestination = NavRouter.HomeScreenRoute.route
-            )
-            {
+            ) {
+                NavHost(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it),
+                    navController = navController,
+                    startDestination = NavRouter.HomeScreenRoute.route
+                )
+                {
 
-                composable(
-                    route = NavRouter.SplashScreen.route,
-                ) {
-                    SplashScreen(navController = navController)
+                    composable(
+                        route = NavRouter.SplashScreen.route,
+                    ) {
+                        SplashScreen(navController = navController)
+                    }
+
+                    composable(
+                        route = NavRouter.FaqScreenRoute.route,
+                    ) {
+                        //appBarTitle = stringResource(id = )
+                        FaqScreen()
+                    }
+
+                    composable(
+                        route = NavRouter.HomeScreenRoute.route,
+                    ) {
+                        appBarTitle = appName
+                        HomeScreen(navController = navController)
+                    }
+
+
+                    composable(
+                        route = NavRouter.AgenciesScreenRoute.route,
+                    ) {
+                        appBarTitle = NavRouter.AgenciesScreenRoute.resourceStringId?.let {
+                            stringResource(it)
+                        } ?: appName
+                        AgenciesScreen(navController = navController)
+                    }
+
+
+                    composable(
+                        route = NavRouter.BookingScreenRoute.route,
+                    ) {
+                        appBarTitle = NavRouter.BookingScreenRoute.resourceStringId?.let {
+                            stringResource(it)
+                        } ?: appName
+                        BookingScreen(navController = navController)
+                    }
+
+                    composable(
+                        route = NavRouter.ProfileScreenRoute.route,
+                    ) {
+                        appBarTitle = NavRouter.ProfileScreenRoute.resourceStringId?.let {
+                            stringResource(it)
+                        } ?: appName
+                        ProfileScreen(navController = navController)
+                    }
+
+                    composable(
+                        route = NavRouter.AboutScreenRoute.route,
+                    ) {
+                        appBarTitle = NavRouter.AboutScreenRoute.resourceStringId?.let {
+                            stringResource(it)
+                        } ?: appName
+                        AboutScreen()
+                    }
+
                 }
-
-                composable(
-                    route = NavRouter.FaqScreenRoute.route,
-                ) {
-                    //appBarTitle = stringResource(id = )
-                    FaqScreen()
-                }
-
-                composable(
-                    route = NavRouter.HomeScreenRoute.route,
-                ) {
-                    appBarTitle = appName
-                    HomeScreen(navController = navController)
-                }
-
-
-                composable(
-                    route = NavRouter.AgenciesScreenRoute.route,
-                ) {
-                    appBarTitle = NavRouter.AgenciesScreenRoute.resourceStringId?.let {
-                        stringResource(it)
-                    } ?: appName
-                    AgenciesScreen(navController = navController)
-                }
-
-
-                composable(
-                    route = NavRouter.BookingScreenRoute.route,
-                ) {
-                    appBarTitle = NavRouter.BookingScreenRoute.resourceStringId?.let {
-                        stringResource(it)
-                    } ?: appName
-                    BookingScreen(navController = navController)
-                }
-
-                composable(
-                    route = NavRouter.ProfileScreenRoute.route,
-                ) {
-                    appBarTitle = NavRouter.ProfileScreenRoute.resourceStringId?.let {
-                        stringResource(it)
-                    } ?: appName
-                    ProfileScreen(navController = navController)
-                }
-
-                composable(
-                    route = NavRouter.AboutScreenRoute.route,
-                ) {
-                    appBarTitle = NavRouter.AboutScreenRoute.resourceStringId?.let {
-                        stringResource(it)
-                    } ?: appName
-                    AboutScreen()
-                }
-
             }
         }
-    }
 
+    }
 }
 
 
