@@ -4,17 +4,25 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.TripOrigin
-import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,14 +73,15 @@ val listOfRoutes = listOf<String>(
 fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hiltViewModel()) {
     val textColor = MaterialTheme.colorScheme.onBackground
 
-    val selection = rememberSaveable {
-        mutableStateOf(PasajeSelection.ORIGIN)
-    }
-    val bottomSheetState = rememberBottomSheetScaffoldState()
+    val bottomSheetState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(
+            initialValue = BottomSheetValue.Collapsed
+        )
+    )
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        bottomSheetState.bottomSheetState.collapse()
+    val selection = remember {
+        mutableStateOf(PasajeSelection.ORIGIN)
     }
 
     val (origin, setOrigin) = remember {
@@ -93,13 +102,14 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
             bottomEnd = 0.dp,
             bottomStart = 0.dp
         ),
+        sheetElevation = 8.dp,
         backgroundColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.background,
         sheetContent = {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-
                     .height(10.dp)
                     .background(MaterialTheme.colorScheme.background)
             ) {
@@ -112,30 +122,29 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                         .background(MaterialTheme.colorScheme.secondaryContainer)
                 )
             }
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(8.dp)
             ) {
-                (listOfRoutes.sortedBy { it }
-                    .filter { it != origin && it != destiny }).forEach { route ->
-                        Text(modifier = Modifier.clickable {
+                items(listOfRoutes.sortedBy { it }
+                    .filter { it != origin && it != destiny }) { route ->
+                    Text(modifier = Modifier.clickable {
 
-                            if (selection.value == PasajeSelection.ORIGIN) {
-                                setOrigin(route)
+                        if (selection.value == PasajeSelection.ORIGIN) {
+                            setOrigin(route)
 
-                            } else {
-                                setDestiny(route)
-                            }
+                        } else {
+                            setDestiny(route)
+                        }
 
-                            scope.launch {
-                                bottomSheetState.bottomSheetState.collapse()
-                            }
-                        }, text = route)
-                    }
+                        scope.launch {
+                            bottomSheetState.bottomSheetState.collapse()
+                        }
+                    }, text = route)
                 }
+            }
 
         }) {
         Column(
