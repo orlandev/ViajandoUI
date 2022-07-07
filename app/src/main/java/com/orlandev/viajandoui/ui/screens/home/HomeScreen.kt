@@ -228,7 +228,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
             Selector(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(50.dp)
                     .padding(horizontal = 16.dp),
             ) {
 
