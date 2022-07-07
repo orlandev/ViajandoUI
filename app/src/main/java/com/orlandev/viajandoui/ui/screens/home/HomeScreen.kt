@@ -7,18 +7,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.BackdropScaffold
+import androidx.compose.material.BackdropValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.TripOrigin
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
+import androidx.compose.material.rememberBackdropScaffoldState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -71,13 +70,9 @@ val listOfRoutes = listOf<String>(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hiltViewModel()) {
+
     val textColor = MaterialTheme.colorScheme.onBackground
 
-    val bottomSheetState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(
-            initialValue = BottomSheetValue.Collapsed
-        )
-    )
     val scope = rememberCoroutineScope()
 
     val selection = remember {
@@ -92,42 +87,142 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         mutableStateOf("")
     }
 
-    BottomSheetScaffold(
-        modifier = Modifier.fillMaxSize(),
-        scaffoldState = bottomSheetState,
-        sheetPeekHeight = 0.dp,
-        sheetShape = RoundedCornerShape(
-            topStart = 8.dp,
-            topEnd = 8.dp,
-            bottomEnd = 0.dp,
-            bottomStart = 0.dp
-        ),
-        sheetElevation = 8.dp,
-        backgroundColor = MaterialTheme.colorScheme.background,
-        contentColor = MaterialTheme.colorScheme.background,
-        sheetContent = {
+    val backdropState = rememberBackdropScaffoldState(BackdropValue.Revealed)
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .background(MaterialTheme.colorScheme.background)
+    val halfHeightDp = Dp((LocalConfiguration.current.screenHeightDp / 6).toFloat())
+
+    BackdropScaffold(
+        backLayerBackgroundColor = MaterialTheme.colorScheme.background,
+        frontLayerBackgroundColor = MaterialTheme.colorScheme.background,
+        scaffoldState = backdropState,
+        appBar = {},
+        headerHeight = 0.dp,
+        peekHeight = halfHeightDp,
+        backLayerContent = {
+
+            Column(
+                Modifier
+                    .fillMaxSize()
             ) {
-                Box(
+                Row(
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(50))
-                        .align(Alignment.Center)
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                )
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(start = 18.dp, top = 16.dp, bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Image(
+                        modifier = Modifier.size(100.dp),
+                        contentScale = ContentScale.FillBounds,
+                        painter = painterResource(id = R.drawable.app_logo),
+                        contentDescription = null
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column(modifier = Modifier.weight(5f), horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = stringResource(id = R.string.hi_there),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Light,
+                            color = textColor
+                        )
+                        Text(
+                            text = stringResource(id = R.string.your_itinerary),
+                            color = textColor
+                        )
+                    }
+                }
+
+                OutlinedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(18.dp)
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            IconTextRouteItem(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
+                                scope.launch {
+                                    selection.value = PasajeSelection.ORIGIN
+                                    backdropState.conceal()
+                                }
+                            }
+                            Divider()
+                            IconTextRouteItem(
+                                icon = Icons.Default.LocationOn,
+                                text = destiny.ifEmpty {
+                                    stringResource(
+                                        id = R.string.destiny_text
+                                    )
+                                }) {
+                                selection.value = PasajeSelection.DESTINY
+                                scope.launch {
+                                    backdropState.conceal()
+                                }
+                            }
+                        }
+
+                        FloatingActionButton(
+                            modifier = Modifier
+                                .offset(x = (-16).dp)
+                                .size(60.dp)
+                                .align(Alignment.CenterEnd),
+                            onClick = {
+
+                                setOrigin(destiny)
+                                setDestiny(origin)
+
+                            }
+
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.reload),
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
+
+                //Seleccion de ida y regreso
+                Selector(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .padding(horizontal = 16.dp),
+                ) {
+
+                }
             }
+        },
+        frontLayerContent = {
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(8.dp)
             ) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(10.dp)
+                        //  .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(50.dp)
+                                .height(6.dp)
+                                .clip(RoundedCornerShape(50))
+                                .align(Alignment.Center)
+                                .background(MaterialTheme.colorScheme.secondaryContainer)
+                        )
+                    }
+                }
                 items(listOfRoutes.sortedBy { it }
                     .filter { it != origin && it != destiny }) { route ->
                     Text(modifier = Modifier.clickable {
@@ -140,111 +235,15 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                         }
 
                         scope.launch {
-                            bottomSheetState.bottomSheetState.collapse()
+                            backdropState.reveal()
                         }
                     }, text = route)
                 }
             }
-
-        }) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(start = 18.dp, top = 16.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                Image(
-                    modifier = Modifier.size(100.dp),
-                    contentScale = ContentScale.FillBounds,
-                    painter = painterResource(id = R.drawable.app_logo),
-                    contentDescription = null
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.weight(5f), horizontalAlignment = Alignment.Start) {
-                    Text(
-                        text = stringResource(id = R.string.hi_there),
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Light,
-                        color = textColor
-                    )
-                    Text(
-                        text = stringResource(id = R.string.your_itinerary),
-                        color = textColor
-                    )
-                }
-            }
-
-            OutlinedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp)
-                    .padding(18.dp)
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        IconTextRouteItem(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
-                            scope.launch {
-                                selection.value = PasajeSelection.ORIGIN
-                                bottomSheetState.bottomSheetState.expand()
-                            }
-                        }
-                        Divider()
-                        IconTextRouteItem(icon = Icons.Default.LocationOn, text = destiny.ifEmpty {
-                            stringResource(
-                                id = R.string.destiny_text
-                            )
-                        }) {
-                            selection.value = PasajeSelection.DESTINY
-                            scope.launch {
-                                bottomSheetState.bottomSheetState.expand()
-                            }
-                        }
-                    }
-
-                    FloatingActionButton(
-                        modifier = Modifier
-                            .offset(x = (-16).dp)
-                            .size(60.dp)
-                            .align(Alignment.CenterEnd),
-                        onClick = {
-
-                            setOrigin(destiny)
-                            setDestiny(origin)
-
-                        }
-
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.reload),
-                            contentDescription = null
-                        )
-                    }
-                }
-            }
-
-            //Seleccion de ida y regreso
-            Selector(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(horizontal = 16.dp),
-            ) {
-
-            }
         }
-    }
+    )
 }
+
 
 
 @Composable
