@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.TripOrigin
 import androidx.compose.material.rememberBottomSheetScaffoldState
@@ -22,15 +23,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orlandev.viajandoui.R
+import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import kotlinx.coroutines.launch
 
 enum class PasajeSelection {
     ORIGIN,
     DESTINY
+}
+
+enum class SelectionType {
+    SOLO_IDA,
+    IDA_REGRESO
 }
 
 val listOfRoutes = listOf<String>(
@@ -176,14 +184,14 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        SelectorComp(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
+                        IconTextRouteItem(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
                             scope.launch {
                                 selection.value = PasajeSelection.ORIGIN
                                 bottomSheetState.bottomSheetState.expand()
                             }
                         }
                         Divider()
-                        SelectorComp(icon = Icons.Default.LocationOn, text = destiny.ifEmpty {
+                        IconTextRouteItem(icon = Icons.Default.LocationOn, text = destiny.ifEmpty {
                             stringResource(
                                 id = R.string.destiny_text
                             )
@@ -215,23 +223,32 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                     }
                 }
             }
+
+            //Seleccion de ida y regreso
+            Selector(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .padding(horizontal = 16.dp)
+            ) {
+
+            }
         }
-
     }
-
-
 }
 
+
 @Composable
-fun SelectorComp(
-    icon: ImageVector = Icons.Default.TripOrigin,
+fun IconTextRouteItem(
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .height(60.dp),
+    icon: ImageVector? = Icons.Default.TripOrigin,
     text: String,
     onClick: () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
+        modifier = modifier
             .clickable {
                 onClick()
             },
@@ -240,7 +257,83 @@ fun SelectorComp(
 
     ) {
         Spacer(modifier = Modifier.width(1.dp))
-        Icon(icon, contentDescription = null)
+        if (icon != null)
+            Icon(icon, contentDescription = null)
         Text(text = text)
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Selector(
+    modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .height(80.dp)
+        .padding(8.dp), onSelection: (SelectionType) -> Unit
+) {
+
+    //TRUE -> Ida y regreso
+    //FALSE -> Solo ida
+
+    val selectable = remember {
+        mutableStateOf(SelectionType.SOLO_IDA)
+    }
+
+    OutlinedCard(
+        modifier = modifier
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            //TODO Add Font to text
+
+            IconTextRouteItem(
+                icon = if (selectable.value == SelectionType.SOLO_IDA) Icons.Default.Check else null,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(if (selectable.value == SelectionType.SOLO_IDA) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
+                    .weight(1f),
+                text = "Solo ida"
+            )
+            {
+                selectable.value = SelectionType.SOLO_IDA
+                onSelection(SelectionType.IDA_REGRESO)
+            }
+            Divider(
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+            )
+            IconTextRouteItem(
+                icon = if (selectable.value == SelectionType.IDA_REGRESO) Icons.Default.Check else null,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(if (selectable.value == SelectionType.IDA_REGRESO) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
+                    .weight(1f),
+                text = "Ida y Regreso"
+            ) {
+                selectable.value = SelectionType.IDA_REGRESO
+                onSelection(SelectionType.IDA_REGRESO)
+            }
+
+        }
+
+    }
+
+}
+
+@Preview
+@Composable
+fun SelectorPreview() {
+    ViajandoUITheme {
+        Selector(onSelection = {})
+    }
+}
+
+
