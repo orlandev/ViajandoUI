@@ -1,9 +1,10 @@
 package com.orlandev.viajandoui.ui.screens.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -30,6 +32,25 @@ enum class PasajeSelection {
     ORIGIN,
     DESTINY
 }
+
+val listOfRoutes = listOf<String>(
+    "Pinar del Río",
+    "Artemisa",
+    "La Habana",
+    "Mayabeque",
+    "Matanzas",
+    "Cienfuegos",
+    "Villa Clara",
+    "Sancti Spíritus",
+    "Ciego de Ávila",
+    "Camagüey",
+    "Las Tunas",
+    "Granma",
+    "Holguín",
+    "Santiago de Cuba",
+    "Guantánamo",
+    "Isla de la Juventud",
+)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -58,26 +79,56 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
         modifier = Modifier.fillMaxSize(),
         scaffoldState = bottomSheetState,
         sheetPeekHeight = 0.dp,
+        sheetShape = RoundedCornerShape(
+            topStart = 8.dp,
+            topEnd = 8.dp,
+            bottomEnd = 0.dp,
+            bottomStart = 0.dp
+        ),
         backgroundColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.background,
         sheetContent = {
-            LazyColumn {
-                items(500) {
-                    Text(modifier = Modifier.clickable {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
 
-                        if (selection.value == PasajeSelection.ORIGIN) {
-                            setOrigin("$it")
-
-                        } else {
-                            setDestiny("$it")
-                        }
-
-                        scope.launch {
-                            bottomSheetState.bottomSheetState.collapse()
-                        }
-                    }, text = "LIST OF PLACES $it")
-                }
+                    .height(10.dp)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(50))
+                        .align(Alignment.Center)
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                )
             }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(8.dp)
+            ) {
+                (listOfRoutes.sortedBy { it }
+                    .filter { it != origin && it != destiny }).forEach { route ->
+                        Text(modifier = Modifier.clickable {
+
+                            if (selection.value == PasajeSelection.ORIGIN) {
+                                setOrigin(route)
+
+                            } else {
+                                setDestiny(route)
+                            }
+
+                            scope.launch {
+                                bottomSheetState.bottomSheetState.collapse()
+                            }
+                        }, text = route)
+                    }
+                }
+
         }) {
         Column(
             Modifier
