@@ -3,6 +3,8 @@ package com.orlandev.viajandoui.ui.screens.home
 import android.app.DatePickerDialog
 import android.widget.DatePicker
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -218,7 +220,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                     Selector(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(60.dp),
+                            .height(50.dp),
                     ) {
                         selectorTripType.value = it
                     }
@@ -230,18 +232,22 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                         text = mDateIda.value.ifEmpty { stringResource(id = R.string.fecha_ida) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(60.dp),
+                            .height(50.dp),
                         callBackDate = mDateIda,
                     )
                 }
 
                 item {
-                    AnimatedVisibility(visible = selectorTripType.value == SelectionType.IDA_REGRESO) {
+                    AnimatedVisibility(
+                        visible = selectorTripType.value == SelectionType.IDA_REGRESO,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
 
                         CalendarSelector(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(60.dp),
+                                .height(50.dp),
                             text = mDateIdaRegreso.value.ifEmpty { stringResource(id = R.string.fecha_regreso) },
                             callBackDate = mDateIdaRegreso
                         )
