@@ -229,7 +229,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp)
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
             ) {
 
             }
@@ -243,6 +243,7 @@ fun IconTextRouteItem(
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .height(60.dp),
+    alignment: Arrangement.HorizontalOrVertical? = null,
     icon: ImageVector? = Icons.Default.TripOrigin,
     text: String,
     onClick: () -> Unit = {}
@@ -253,9 +254,9 @@ fun IconTextRouteItem(
                 onClick()
             },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = alignment ?: Arrangement.spacedBy(10.dp),
 
-    ) {
+        ) {
         Spacer(modifier = Modifier.width(1.dp))
         if (icon != null)
             Icon(icon, contentDescription = null)
@@ -298,7 +299,8 @@ fun Selector(
                     .fillMaxHeight()
                     .background(if (selectable.value == SelectionType.SOLO_IDA) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
                     .weight(1f),
-                text = "Solo ida"
+                text = "Solo ida",
+                alignment = Arrangement.Center
             )
             {
                 selectable.value = SelectionType.SOLO_IDA
@@ -316,7 +318,8 @@ fun Selector(
                     .fillMaxHeight()
                     .background(if (selectable.value == SelectionType.IDA_REGRESO) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
                     .weight(1f),
-                text = "Ida y Regreso"
+                text = "Ida y Regreso",
+                alignment = Arrangement.Center
             ) {
                 selectable.value = SelectionType.IDA_REGRESO
                 onSelection(SelectionType.IDA_REGRESO)
