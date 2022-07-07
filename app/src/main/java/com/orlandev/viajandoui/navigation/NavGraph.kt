@@ -2,14 +2,11 @@ package com.orlandev.viajandoui.navigation
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Menu
@@ -28,15 +25,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.screens.about.AboutScreen
 import com.orlandev.viajandoui.ui.screens.agencies.AgenciesScreen
 import com.orlandev.viajandoui.ui.screens.booking.BookingScreen
 import com.orlandev.viajandoui.ui.screens.faq.FaqScreen
-import com.orlandev.viajandoui.ui.screens.home.HomeDetails
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
-import com.orlandev.viajandoui.ui.screens.new_booking.NewBookingScreen
 import com.orlandev.viajandoui.ui.screens.profile.ProfileScreen
 import com.orlandev.viajandoui.ui.screens.splash_screen.SplashScreen
 import com.orlandev.viajandoui.utils.ShareIntent
@@ -76,21 +70,9 @@ fun NavGraph(navController: NavHostController) {
         )
     }
 
-    var isVisibleFabButton = rememberSaveable {
-        mutableStateOf(true)
-    }
-
     val context = LocalContext.current
     val sitransAppLink = stringResource(id = R.string.sitrans_viajando_apklis_link)
 
-    LaunchedEffect(scrollBehavior.state.offset) {
-        delay(100)
-        if (scrollBehavior.state.offset < 0f && expandeFabButtonState) {
-            expandeFabButtonState = false
-        } else if (scrollBehavior.state.offset > -20f && !expandeFabButtonState) {
-            expandeFabButtonState = true
-        }
-    }
 
     val showingSplashScreen = rememberSaveable {
         mutableStateOf(true)
@@ -102,8 +84,6 @@ fun NavGraph(navController: NavHostController) {
         delay(2000)
         showingSplashScreen.value = false
     }
-
-    val offsetStateEnd = animateDpAsState(targetValue = 200.dp)
 
     val scope = rememberCoroutineScope()
 
@@ -128,7 +108,6 @@ fun NavGraph(navController: NavHostController) {
                         }) {
                             Icon(Icons.Outlined.HelpOutline, contentDescription = null)
                         }
-
 
                         IconButton(onClick = {
                             ShareIntent.shareIt(
@@ -185,22 +164,6 @@ fun NavGraph(navController: NavHostController) {
                     }
                 )
             },
-
-            floatingActionButton = {
-
-                ExtendedFloatingActionButton(
-                    modifier = Modifier.offset(y = if (!isVisibleFabButton.value) offsetStateEnd.value else 0.dp),
-                    expanded = expandeFabButtonState,
-                    icon = { Icon(Icons.Default.Bookmark, contentDescription = null) },
-                    onClick = {
-                        navController.navigate(NavRouter.NewBookingScreenRoute.route)
-                    }, text = {
-                        Text(text = stringResource(id = R.string.reserv))
-                    }
-                )
-
-            },
-            floatingActionButtonPosition = FabPosition.End,
             bottomBar =
             {
                 //TODO ( ADD Show/Hide Scroll Behavior)
@@ -263,17 +226,8 @@ fun NavGraph(navController: NavHostController) {
                 }
 
                 composable(
-                    route = NavRouter.NewBookingScreenRoute.route,
-                ) {
-                    isVisibleFabButton.value = false
-                    appBarTitle = stringResource(id = R.string.new_booking)
-                    NewBookingScreen()
-                }
-
-                composable(
                     route = NavRouter.FaqScreenRoute.route,
                 ) {
-                    isVisibleFabButton.value = true
                     //appBarTitle = stringResource(id = )
                     FaqScreen()
                 }
@@ -281,26 +235,14 @@ fun NavGraph(navController: NavHostController) {
                 composable(
                     route = NavRouter.HomeScreenRoute.route,
                 ) {
-                    isVisibleFabButton.value = true
                     appBarTitle = appName
                     HomeScreen(navController = navController)
-                }
-
-                composable(
-                    route = NavRouter.HomeDetailsScreenRoute.route + "/{id}",
-                    arguments = listOf(navArgument("id") { defaultValue = "" }),
-                ) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("id") ?: "0"
-                    isVisibleFabButton.value = true
-                    appBarTitle = appName
-                    HomeDetails(id = id)
                 }
 
 
                 composable(
                     route = NavRouter.AgenciesScreenRoute.route,
                 ) {
-                    isVisibleFabButton.value = true
                     appBarTitle = NavRouter.AgenciesScreenRoute.resourceStringId?.let {
                         stringResource(it)
                     } ?: appName
@@ -311,7 +253,6 @@ fun NavGraph(navController: NavHostController) {
                 composable(
                     route = NavRouter.BookingScreenRoute.route,
                 ) {
-                    isVisibleFabButton.value = true
                     appBarTitle = NavRouter.BookingScreenRoute.resourceStringId?.let {
                         stringResource(it)
                     } ?: appName
@@ -321,7 +262,6 @@ fun NavGraph(navController: NavHostController) {
                 composable(
                     route = NavRouter.ProfileScreenRoute.route,
                 ) {
-                    isVisibleFabButton.value = true
                     appBarTitle = NavRouter.ProfileScreenRoute.resourceStringId?.let {
                         stringResource(it)
                     } ?: appName
@@ -331,7 +271,6 @@ fun NavGraph(navController: NavHostController) {
                 composable(
                     route = NavRouter.AboutScreenRoute.route,
                 ) {
-                    isVisibleFabButton.value = true
                     appBarTitle = NavRouter.AboutScreenRoute.resourceStringId?.let {
                         stringResource(it)
                     } ?: appName
