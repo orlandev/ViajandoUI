@@ -1,5 +1,8 @@
 package com.orlandev.viajandoui.ui.screens.home
 
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,21 +14,20 @@ import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.TripOrigin
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,7 @@ import androidx.navigation.NavController
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import kotlinx.coroutines.launch
+import java.util.*
 
 enum class PasajeSelection {
     ORIGIN,
@@ -47,6 +50,12 @@ enum class SelectionType {
     SOLO_IDA,
     IDA_REGRESO
 }
+
+data class TripDate(
+    val day: Int,
+    val month: Int,
+    val year: Int
+)
 
 val listOfRoutes = listOf<String>(
     "Pinar del Río",
@@ -91,110 +100,167 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
 
     val halfHeightDp = Dp((LocalConfiguration.current.screenHeightDp / 6).toFloat())
 
+    val selectorTripType = remember {
+        mutableStateOf(SelectionType.SOLO_IDA)
+    }
+
+    val mDateIda = remember { mutableStateOf("") }
+    val mDateIdaRegreso = remember { mutableStateOf("") }
+
     BackdropScaffold(
         backLayerBackgroundColor = MaterialTheme.colorScheme.background,
         frontLayerBackgroundColor = MaterialTheme.colorScheme.background,
         scaffoldState = backdropState,
+        gesturesEnabled = false,
         appBar = {},
         headerHeight = 0.dp,
         peekHeight = halfHeightDp,
         backLayerContent = {
 
-            Column(
+            LazyColumn(
                 Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(start = 18.dp, top = 16.dp, bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Image(
-                        modifier = Modifier.size(100.dp),
-                        contentScale = ContentScale.FillBounds,
-                        painter = painterResource(id = R.drawable.app_logo),
-                        contentDescription = null
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(5f), horizontalAlignment = Alignment.Start) {
-                        Text(
-                            text = stringResource(id = R.string.hi_there),
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Light,
-                            color = textColor
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(start = 18.dp, top = 16.dp, bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Image(
+                            modifier = Modifier.size(100.dp),
+                            contentScale = ContentScale.FillBounds,
+                            painter = painterResource(id = R.drawable.app_logo),
+                            contentDescription = null
                         )
-                        Text(
-                            text = stringResource(id = R.string.your_itinerary),
-                            color = textColor
-                        )
-                    }
-                }
 
-                OutlinedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(18.dp)
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                        Spacer(modifier = Modifier.width(16.dp))
                         Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.SpaceEvenly
+                            modifier = Modifier.weight(5f),
+                            horizontalAlignment = Alignment.Start
                         ) {
-                            IconTextRouteItem(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
-                                scope.launch {
-                                    selection.value = PasajeSelection.ORIGIN
-                                    backdropState.conceal()
-                                }
-                            }
-                            Divider()
-                            IconTextRouteItem(
-                                icon = Icons.Default.LocationOn,
-                                text = destiny.ifEmpty {
-                                    stringResource(
-                                        id = R.string.destiny_text
-                                    )
-                                }) {
-                                selection.value = PasajeSelection.DESTINY
-                                scope.launch {
-                                    backdropState.conceal()
-                                }
-                            }
-                        }
-
-                        FloatingActionButton(
-                            modifier = Modifier
-                                .offset(x = (-16).dp)
-                                .size(60.dp)
-                                .align(Alignment.CenterEnd),
-                            onClick = {
-
-                                setOrigin(destiny)
-                                setDestiny(origin)
-
-                            }
-
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.reload),
-                                contentDescription = null
+                            Text(
+                                text = stringResource(id = R.string.hi_there),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Light,
+                                color = textColor
+                            )
+                            Text(
+                                text = stringResource(id = R.string.your_itinerary),
+                                color = textColor
                             )
                         }
                     }
                 }
 
-                //Seleccion de ida y regreso
-                Selector(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .padding(horizontal = 16.dp),
-                ) {
+                item {
+                    OutlinedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                IconTextSelector(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
+                                    scope.launch {
+                                        selection.value = PasajeSelection.ORIGIN
+                                        backdropState.conceal()
+                                    }
+                                }
+                                Divider()
+                                IconTextSelector(
+                                    icon = Icons.Default.LocationOn,
+                                    text = destiny.ifEmpty {
+                                        stringResource(
+                                            id = R.string.destiny_text
+                                        )
+                                    }) {
+                                    selection.value = PasajeSelection.DESTINY
+                                    scope.launch {
+                                        backdropState.conceal()
+                                    }
+                                }
+                            }
 
+                            FloatingActionButton(
+                                modifier = Modifier
+                                    .offset(x = (-16).dp)
+                                    .size(60.dp)
+                                    .align(Alignment.CenterEnd),
+                                onClick = {
+
+                                    setOrigin(destiny)
+                                    setDestiny(origin)
+
+                                }
+
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.reload),
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+
+                    //Seleccion de ida y regreso
+                    Selector(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp),
+                    ) {
+                        selectorTripType.value = it
+                    }
+                }
+
+                item {
+
+                    CalendarSelector(
+                        text = mDateIda.value.ifEmpty { stringResource(id = R.string.fecha_ida) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp),
+                        callBackDate = mDateIda,
+                    )
+                }
+
+                item {
+                    AnimatedVisibility(visible = selectorTripType.value == SelectionType.IDA_REGRESO) {
+
+                        CalendarSelector(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(60.dp),
+                            text = mDateIdaRegreso.value.ifEmpty { stringResource(id = R.string.fecha_regreso) },
+                            callBackDate = mDateIdaRegreso
+                        )
+                    }
+                }
+                item {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        onClick = { /*TODO*/ }) {
+                        Text(
+                            text = stringResource(id = R.string.search_button),
+                        )
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         },
@@ -244,10 +310,62 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CalendarSelector(
+    modifier: Modifier = Modifier,
+    text: String = stringResource(id = R.string.fecha_ida),
+    callBackDate: MutableState<String>,
 
+
+    ) {
+    //Necesario para el calendarios
+
+    val mContext = LocalContext.current
+
+    // Declaring integer values
+    // for year, month and day
+    val mYear: Int
+    val mMonth: Int
+    val mDay: Int
+
+    // Initializing a Calendar
+    val mCalendar = Calendar.getInstance()
+
+    // Fetching current year, month and day
+    mYear = mCalendar.get(Calendar.YEAR)
+    mMonth = mCalendar.get(Calendar.MONTH)
+    mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+    mCalendar.time = Date()
+
+    // Declaring a string value to
+    // store date in string format
+
+
+    // Declaring DatePickerDialog and setting
+    // initial values as current values (present year, month and day)
+    val mDatePickerDialog = DatePickerDialog(
+        mContext,
+        { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+            callBackDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+        }, mYear, mMonth, mDay
+    )
+
+    //Necesario para el calendarios
+
+
+    OutlinedCard(
+        modifier = modifier
+    ) {
+        IconTextSelector(icon = Icons.Default.CalendarMonth, text = text) {
+            mDatePickerDialog.show()
+        }
+    }
+}
 
 @Composable
-fun IconTextRouteItem(
+fun IconTextSelector(
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .height(60.dp),
@@ -301,7 +419,7 @@ fun Selector(
 
             //TODO Add Font to text
 
-            IconTextRouteItem(
+            IconTextSelector(
                 icon = if (selectable.value == SelectionType.SOLO_IDA) Icons.Default.Check else null,
                 modifier = Modifier
                     .fillMaxHeight()
@@ -312,7 +430,7 @@ fun Selector(
             )
             {
                 selectable.value = SelectionType.SOLO_IDA
-                onSelection(SelectionType.IDA_REGRESO)
+                onSelection(SelectionType.SOLO_IDA)
             }
             Divider(
                 color = MaterialTheme.colorScheme.onBackground,
@@ -320,7 +438,7 @@ fun Selector(
                     .fillMaxHeight()
                     .width(1.dp)
             )
-            IconTextRouteItem(
+            IconTextSelector(
                 icon = if (selectable.value == SelectionType.IDA_REGRESO) Icons.Default.Check else null,
                 modifier = Modifier
                     .fillMaxHeight()

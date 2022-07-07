@@ -31,4 +31,7 @@
     <string name="your_itinerary">A donde quieres ir?</string>
     <string name="origin_text">Origen</string>
     <string name="destiny_text">Destino</string>
+    <string name="fecha_ida">Fecha de ida</string>
+    <string name="fecha_regreso">Fecha de regreso</string>
+    <string name="search_button">Buscar</string>
 </resources>

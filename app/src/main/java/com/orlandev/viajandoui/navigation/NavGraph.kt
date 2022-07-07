@@ -64,9 +64,9 @@ fun NavGraph(navController: NavHostController) {
     val state = TopAppBarScrollState(0f, 0f, 0f)
 
     val scrollBehavior = remember(decayAnimationSpec) {
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+        TopAppBarDefaults.pinnedScrollBehavior(
             state = state,
-            decayAnimationSpec = decayAnimationSpec
+
         )
     }
 
