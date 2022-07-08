@@ -34,4 +34,8 @@
     <string name="fecha_ida">Fecha de ida</string>
     <string name="fecha_regreso">Fecha de regreso</string>
     <string name="search_button">Buscar</string>
+    <string name="bus_name">Omnibus</string>
+    <string name="airplane_name">Avión</string>
+    <string name="boat_name">Barco</string>
+    <string name="train_name">Tren</string>
 </resources>

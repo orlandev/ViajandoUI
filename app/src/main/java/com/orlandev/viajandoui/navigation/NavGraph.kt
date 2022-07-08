@@ -21,18 +21,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.orlandev.viajandoui.R
+import com.orlandev.viajandoui.SharedViewModel
 import com.orlandev.viajandoui.ui.screens.about.AboutScreen
 import com.orlandev.viajandoui.ui.screens.agencies.AgenciesScreen
 import com.orlandev.viajandoui.ui.screens.booking.BookingScreen
 import com.orlandev.viajandoui.ui.screens.faq.FaqScreen
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
 import com.orlandev.viajandoui.ui.screens.profile.ProfileScreen
+import com.orlandev.viajandoui.ui.screens.search_travels.SearchTravelsScreen
 import com.orlandev.viajandoui.ui.screens.splash_screen.SplashScreen
 import com.orlandev.viajandoui.utils.ShareIntent
 import kotlinx.coroutines.delay
@@ -40,7 +43,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel = hiltViewModel()) {
 
     val itemsBottomBarItems = listOf(
         NavRouter.AgenciesScreenRoute,
@@ -57,9 +60,7 @@ fun NavGraph(navController: NavHostController) {
     }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    var expandeFabButtonState by remember {
-        mutableStateOf(true)
-    }
+
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
 
     val state = TopAppBarScrollState(0f, 0f, 0f)
@@ -221,11 +222,6 @@ fun NavGraph(navController: NavHostController) {
                 )
                 {
 
-                    composable(
-                        route = NavRouter.SplashScreen.route,
-                    ) {
-                        SplashScreen(navController = navController)
-                    }
 
                     composable(
                         route = NavRouter.FaqScreenRoute.route,
@@ -238,7 +234,14 @@ fun NavGraph(navController: NavHostController) {
                         route = NavRouter.HomeScreenRoute.route,
                     ) {
                         appBarTitle = appName
-                        HomeScreen(navController = navController)
+                        HomeScreen(navController = navController,sharedViewModel)
+                    }
+
+                    composable(
+                        route = NavRouter.SearchTravelsRoute.route,
+                    ) {
+                        appBarTitle = appName
+                        SearchTravelsScreen(navController = navController,sharedViewModel)
                     }
 
 

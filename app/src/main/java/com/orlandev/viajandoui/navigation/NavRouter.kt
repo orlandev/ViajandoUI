@@ -14,6 +14,8 @@ sealed class NavRouter(
     object SplashScreen : NavRouter("splash_screen")
     object FaqScreenRoute : NavRouter("faq")
 
+    object SearchTravelsRoute : NavRouter("search_travels")
+
 
     //BottomBar sections
     object HomeScreenRoute :

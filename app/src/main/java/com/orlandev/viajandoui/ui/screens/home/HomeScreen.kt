@@ -36,28 +36,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.orlandev.viajandoui.R
+import com.orlandev.viajandoui.SharedViewModel
+import com.orlandev.viajandoui.model.PasajeSelection
+import com.orlandev.viajandoui.model.SearchTravelModel
+import com.orlandev.viajandoui.model.TravelType
+import com.orlandev.viajandoui.navigation.NavRouter
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import kotlinx.coroutines.launch
 import java.util.*
 
-enum class PasajeSelection {
-    ORIGIN,
-    DESTINY
-}
-
-enum class SelectionType {
-    SOLO_IDA,
-    IDA_REGRESO
-}
-
-data class TripDate(
-    val day: Int,
-    val month: Int,
-    val year: Int
-)
 
 val listOfRoutes = listOf<String>(
     "Pinar del Río",
@@ -80,7 +69,7 @@ val listOfRoutes = listOf<String>(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
 
     val textColor = MaterialTheme.colorScheme.onBackground
 
@@ -103,7 +92,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
     val halfHeightDp = Dp((LocalConfiguration.current.screenHeightDp / 6).toFloat())
 
     val selectorTripType = remember {
-        mutableStateOf(SelectionType.SOLO_IDA)
+        mutableStateOf(TravelType.SOLO_IDA)
     }
 
     val mDateIda = remember { mutableStateOf("") }
@@ -239,7 +228,7 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
 
                 item {
                     AnimatedVisibility(
-                        visible = selectorTripType.value == SelectionType.IDA_REGRESO,
+                        visible = selectorTripType.value == TravelType.IDA_REGRESO,
                         enter = expandVertically(),
                         exit = shrinkVertically()
                     ) {
@@ -258,7 +247,20 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = hilt
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
-                        onClick = { /*TODO*/ }) {
+                        onClick = {
+
+                            val newTravel = SearchTravelModel(
+                                origin = origin,
+                                destiny = destiny,
+                                dateIda = mDateIda.value,
+                                dateIdaYRegreso = mDateIdaRegreso.value,
+                                travelType = selectorTripType.value
+                            )
+                            sharedViewModel.onSetTravelData(newTravel = newTravel)
+
+                            navController.navigate(NavRouter.SearchTravelsRoute.route)
+
+                        }) {
                         Text(
                             text = stringResource(id = R.string.search_button),
                         )
@@ -402,14 +404,14 @@ fun Selector(
     modifier: Modifier = Modifier
         .fillMaxWidth()
         .height(80.dp)
-        .padding(8.dp), onSelection: (SelectionType) -> Unit
+        .padding(8.dp), onSelection: (TravelType) -> Unit
 ) {
 
     //TRUE -> Ida y regreso
     //FALSE -> Solo ida
 
     val selectable = remember {
-        mutableStateOf(SelectionType.SOLO_IDA)
+        mutableStateOf(TravelType.SOLO_IDA)
     }
 
     OutlinedCard(
@@ -426,17 +428,17 @@ fun Selector(
             //TODO Add Font to text
 
             IconTextSelector(
-                icon = if (selectable.value == SelectionType.SOLO_IDA) Icons.Default.Check else null,
+                icon = if (selectable.value == TravelType.SOLO_IDA) Icons.Default.Check else null,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .background(if (selectable.value == SelectionType.SOLO_IDA) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
+                    .background(if (selectable.value == TravelType.SOLO_IDA) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
                     .weight(1f),
                 text = "Solo ida",
                 alignment = Arrangement.Center
             )
             {
-                selectable.value = SelectionType.SOLO_IDA
-                onSelection(SelectionType.SOLO_IDA)
+                selectable.value = TravelType.SOLO_IDA
+                onSelection(TravelType.SOLO_IDA)
             }
             Divider(
                 color = MaterialTheme.colorScheme.onBackground,
@@ -445,16 +447,16 @@ fun Selector(
                     .width(1.dp)
             )
             IconTextSelector(
-                icon = if (selectable.value == SelectionType.IDA_REGRESO) Icons.Default.Check else null,
+                icon = if (selectable.value == TravelType.IDA_REGRESO) Icons.Default.Check else null,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .background(if (selectable.value == SelectionType.IDA_REGRESO) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
+                    .background(if (selectable.value == TravelType.IDA_REGRESO) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background)
                     .weight(1f),
                 text = "Ida y Regreso",
                 alignment = Arrangement.Center
             ) {
-                selectable.value = SelectionType.IDA_REGRESO
-                onSelection(SelectionType.IDA_REGRESO)
+                selectable.value = TravelType.IDA_REGRESO
+                onSelection(TravelType.IDA_REGRESO)
             }
 
         }
