@@ -16,8 +16,11 @@ import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.SharedViewModel
 import com.orlandev.viajandoui.model.SearchTravelModel
 import com.orlandev.viajandoui.model.TravelTransportType
-import com.orlandev.viajandoui.ui.screens.home.listOfRoutes
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
+import com.orlandev.viajandoui.utils.RandomChairs
+import com.orlandev.viajandoui.utils.RandomCities
+import com.orlandev.viajandoui.utils.RandomPrice
+import com.orlandev.viajandoui.utils.RandomTime
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -78,15 +81,14 @@ fun TravelCard(travelTransportType: TravelTransportType) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(100.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start =4.dp)
-                    .weight(1.1f)
-                ,
+                    .padding(start = 4.dp)
+                    .weight(1.1f),
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
@@ -129,8 +131,7 @@ fun TravelCard(travelTransportType: TravelTransportType) {
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(start = 2.dp)
-                    .weight(3f)
-                ,
+                    .weight(3f),
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
@@ -143,8 +144,7 @@ fun TravelCard(travelTransportType: TravelTransportType) {
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(start = 8.dp)
-                    .weight(2f)
-                ,
+                    .weight(2f),
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.End
 
@@ -168,31 +168,6 @@ fun TravelCardPreview() {
     ViajandoUITheme {
         TravelCard(TravelTransportType.Train)
     }
-}
-
-
-fun RandomTime(): String {
-    val hour = Random.nextInt(0, 12)
-    val minute = Random.nextInt(0, 60)
-    val M = if (Random.nextInt(0, 1) == 0) "AM" else "PM"
-    val hourString = if (hour < 10) "0$hour" else hour.toString()
-    val minureString = if (minute < 10) "0$minute" else minute.toString()
-    return "$hourString:$minureString$M"
-}
-
-fun RandomCities(): String {
-    val city1 = Random.nextInt(0, listOfRoutes.size)
-    return listOfRoutes[city1]
-}
-
-fun RandomPrice(): String {
-    val price = Random.nextInt(0, 100)
-    return "$$price.00"
-}
-
-fun RandomChairs(): String {
-    val chairs = Random.nextInt(1, 100)
-    return "$chairs"
 }
 
 
