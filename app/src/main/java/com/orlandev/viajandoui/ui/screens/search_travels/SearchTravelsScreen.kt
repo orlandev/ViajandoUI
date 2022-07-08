@@ -106,14 +106,41 @@ fun TravelHeader(travelData: SearchTravelModel? = null) {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            textAlign = TextAlign.Center,
-            text = travelData?.dateIda ?: "-",
-            style = MaterialTheme.typography.titleMedium
-        )
+
+        //TODO Refactor this component
+        if (travelData?.dateIdaYRegreso != null && travelData.dateIdaYRegreso.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = travelData.dateIda ?: " - ",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                if (travelData.travelType == TravelType.SOLO_IDA)
+                    Icon(Icons.Default.DoubleArrow, contentDescription = null)
+                else
+                    Icon(Icons.Default.CompareArrows, contentDescription = null)
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.End,
+                    text = travelData.dateIdaYRegreso,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        } else {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = travelData?.dateIda ?: " - ",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
     }
 
 }
