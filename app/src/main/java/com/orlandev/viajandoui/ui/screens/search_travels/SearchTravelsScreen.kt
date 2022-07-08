@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.SharedViewModel
 import com.orlandev.viajandoui.model.SearchTravelModel
 import com.orlandev.viajandoui.model.TravelTransportType
@@ -79,24 +80,27 @@ fun TravelCard(travelTransportType: TravelTransportType) {
             .fillMaxWidth()
             .height(120.dp)
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start = 8.dp),
+                    .padding(start =4.dp)
+                    .weight(1.1f)
+                ,
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
-                Text(text = RandomTime())
+                Text(text = RandomTime(), style = MaterialTheme.typography.labelSmall)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = RandomTime())
+                Text(text = RandomTime(), style = MaterialTheme.typography.labelSmall)
 
             }
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(50.dp)
-                    .padding(8.dp),
+                    .wrapContentWidth()
+                    .padding(2.dp)
+                    .weight(1f),
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -124,13 +128,34 @@ fun TravelCard(travelTransportType: TravelTransportType) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start = 8.dp),
+                    .padding(start = 2.dp)
+                    .weight(3f)
+                ,
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
                 Text(text = RandomCities())
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = RandomCities())
+
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(start = 8.dp)
+                    .weight(2f)
+                ,
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.End
+
+            ) {
+
+                Text(text = RandomPrice())
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(modifier = Modifier) {
+                    Icon(painterResource(id = R.drawable.ic_seat), contentDescription = null)
+                    Text(text = RandomChairs())
+                }
 
             }
         }
@@ -150,8 +175,8 @@ fun RandomTime(): String {
     val hour = Random.nextInt(0, 12)
     val minute = Random.nextInt(0, 60)
     val M = if (Random.nextInt(0, 1) == 0) "AM" else "PM"
-    val hourString = if(hour<10) "0$hour" else hour.toString()
-    val minureString = if(minute<10) "0$minute" else minute.toString()
+    val hourString = if (hour < 10) "0$hour" else hour.toString()
+    val minureString = if (minute < 10) "0$minute" else minute.toString()
     return "$hourString:$minureString$M"
 }
 
@@ -160,6 +185,15 @@ fun RandomCities(): String {
     return listOfRoutes[city1]
 }
 
+fun RandomPrice(): String {
+    val price = Random.nextInt(0, 100)
+    return "$$price.00"
+}
+
+fun RandomChairs(): String {
+    val chairs = Random.nextInt(1, 100)
+    return "$chairs"
+}
 
 
 
