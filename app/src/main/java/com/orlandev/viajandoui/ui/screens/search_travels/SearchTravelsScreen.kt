@@ -143,19 +143,19 @@ fun TravelCard(travelTransportType: TravelTransportType) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start = 8.dp)
+                    .padding(end = 8.dp)
                     .weight(2f),
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.End
 
             ) {
 
-                Text(text = RandomPrice())
-                Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier) {
-                    Icon(painterResource(id = R.drawable.ic_seat), contentDescription = null)
                     Text(text = RandomChairs())
+                    Icon(painterResource(id = R.drawable.ic_seat), contentDescription = null)
                 }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = RandomPrice())
 
             }
         }
