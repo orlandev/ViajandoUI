@@ -83,7 +83,7 @@ fun TravelCard(travelTransportType: TravelTransportType) {
             .fillMaxWidth()
             .height(100.dp)
     ) {
-        Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(modifier = Modifier.fillMaxSize().padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
