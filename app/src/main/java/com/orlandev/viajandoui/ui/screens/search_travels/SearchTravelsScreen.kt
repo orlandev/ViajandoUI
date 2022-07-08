@@ -3,6 +3,8 @@ package com.orlandev.viajandoui.ui.screens.search_travels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CompareArrows
+import androidx.compose.material.icons.filled.DoubleArrow
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,6 +19,7 @@ import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.SharedViewModel
 import com.orlandev.viajandoui.model.SearchTravelModel
 import com.orlandev.viajandoui.model.TravelTransportType
+import com.orlandev.viajandoui.model.TravelType
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import com.orlandev.viajandoui.utils.RandomChairs
 import com.orlandev.viajandoui.utils.RandomCities
@@ -86,16 +89,31 @@ fun TravelHeader(travelData: SearchTravelModel? = null) {
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = "Santiago",
-                style = MaterialTheme.typography.titleLarge
+                text = travelData?.origin ?: " - ",
+                style = MaterialTheme.typography.titleMedium
             )
+
+            if (travelData?.travelType == TravelType.SOLO_IDA)
+                Icon(Icons.Default.DoubleArrow, contentDescription = null)
+            else
+                Icon(Icons.Default.CompareArrows, contentDescription = null)
+
             Text(
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.End,
-                text = "Isla de la Juventud",
-                style = MaterialTheme.typography.titleLarge
+                text = travelData?.destiny ?: " - ",
+                style = MaterialTheme.typography.titleMedium
             )
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            textAlign = TextAlign.Center,
+            text = travelData?.dateIda ?: "-",
+            style = MaterialTheme.typography.titleMedium
+        )
     }
 
 }
