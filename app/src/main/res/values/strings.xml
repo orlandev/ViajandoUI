@@ -38,4 +38,6 @@
     <string name="airplane_name">Avión</string>
     <string name="boat_name">Barco</string>
     <string name="train_name">Tren</string>
+    <string name="button_text_acept">Aceptar</string>
+    <string name="error_data_empty_in_new_booking">Debes especificar todos los datos para hacer una correcta busqueda.</string>
 </resources>

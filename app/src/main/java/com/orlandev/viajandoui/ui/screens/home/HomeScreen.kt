@@ -96,7 +96,26 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
     }
 
     val mDateIda = remember { mutableStateOf("") }
+
     val mDateIdaRegreso = remember { mutableStateOf("") }
+
+    val errorDataNotSpecify = remember {
+        mutableStateOf(false)
+    }
+
+    if (errorDataNotSpecify.value)
+        AlertDialog(
+            onDismissRequest = { /*TODO*/ },
+            confirmButton = {
+                Button(onClick = { errorDataNotSpecify.value = false }) {
+                    Text(text = stringResource(id = R.string.button_text_acept))
+                }
+            },
+            title = { Text(text = stringResource(id = R.string.app_name)) },
+            text = {
+                Text(text = stringResource(id = R.string.error_data_empty_in_new_booking))
+            }
+        )
 
     BackdropScaffold(
         backLayerBackgroundColor = MaterialTheme.colorScheme.background,
@@ -248,6 +267,11 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                             .fillMaxWidth()
                             .height(50.dp),
                         onClick = {
+
+                            if (origin.isEmpty() || destiny.isEmpty() || mDateIda.value.isEmpty()) {
+                                errorDataNotSpecify.value = true
+                                return@Button
+                            }
 
                             val newTravel = SearchTravelModel(
                                 origin = origin,
