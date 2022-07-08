@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -37,7 +38,6 @@ fun SearchTravelsScreen(
 
     LaunchedEffect(Unit) {
         //TODO Simulating Requesting server information
-
         delay(1500)
         haveData.value = true
     }
@@ -49,8 +49,10 @@ fun SearchTravelsScreen(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
-        item {
-            TravelHeader(travelData)
+        travelData.value?.let { searchDataTravel ->
+            item {
+                TravelHeader(searchDataTravel)
+            }
         }
 
         items(10) {
@@ -63,14 +65,47 @@ fun SearchTravelsScreen(
             }
             TravelCard(travelTransportType = travelT)
         }
+
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
+        }
     }
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TravelHeader(travelData: State<SearchTravelModel?>) {
+fun TravelHeader(travelData: SearchTravelModel? = null) {
 
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Santiago",
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.End,
+                text = "Isla de la Juventud",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+    }
 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TravelHeaderPreview() {
+    ViajandoUITheme {
+        TravelHeader()
+    }
 }
 
 
@@ -83,7 +118,11 @@ fun TravelCard(travelTransportType: TravelTransportType) {
             .fillMaxWidth()
             .height(100.dp)
     ) {
-        Row(modifier = Modifier.fillMaxSize().padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
