@@ -15,6 +15,7 @@ sealed class NavRouter(
     object FaqScreenRoute : NavRouter("faq")
 
     object SearchTravelsRoute : NavRouter("search_travels")
+    object SeatSelector : NavRouter("seat_selector")
 
 
     //BottomBar sections

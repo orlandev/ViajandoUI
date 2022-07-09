@@ -36,6 +36,7 @@ import com.orlandev.viajandoui.ui.screens.faq.FaqScreen
 import com.orlandev.viajandoui.ui.screens.home.HomeScreen
 import com.orlandev.viajandoui.ui.screens.profile.ProfileScreen
 import com.orlandev.viajandoui.ui.screens.search_travels.SearchTravelsScreen
+import com.orlandev.viajandoui.ui.screens.seat_selector.SeatSelectorScreen
 import com.orlandev.viajandoui.ui.screens.splash_screen.SplashScreen
 import com.orlandev.viajandoui.utils.ShareIntent
 import kotlinx.coroutines.delay
@@ -234,14 +235,24 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel 
                         route = NavRouter.HomeScreenRoute.route,
                     ) {
                         appBarTitle = appName
-                        HomeScreen(navController = navController,sharedViewModel)
+                        HomeScreen(navController = navController, sharedViewModel)
+                    }
+
+                    composable(
+                        route = NavRouter.SeatSelector.route,
+                    ) {
+                        appBarTitle = "Seleccione sus Asientos"
+                        SeatSelectorScreen(
+                            navController = navController,
+                            sharedViewModel = sharedViewModel
+                        )
                     }
 
                     composable(
                         route = NavRouter.SearchTravelsRoute.route,
                     ) {
                         appBarTitle = appName
-                        SearchTravelsScreen(navController = navController,sharedViewModel)
+                        SearchTravelsScreen(navController = navController, sharedViewModel)
                     }
 
 

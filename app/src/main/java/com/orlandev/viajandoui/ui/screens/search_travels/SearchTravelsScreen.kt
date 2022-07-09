@@ -28,6 +28,7 @@ import com.orlandev.viajandoui.SharedViewModel
 import com.orlandev.viajandoui.model.SearchTravelModel
 import com.orlandev.viajandoui.model.TravelTransportType
 import com.orlandev.viajandoui.model.TravelType
+import com.orlandev.viajandoui.navigation.NavRouter
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
 import com.orlandev.viajandoui.utils.RandomChairs
 import com.orlandev.viajandoui.utils.RandomCities
@@ -137,11 +138,14 @@ fun SearchTravelsScreen(
             }
         }
 
-        items(travelT.filter { it == filterTravel.value }, key = { it }) { currentTravel ->
+        items(travelT.filter { it == filterTravel.value }) { currentTravel ->
             TravelCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp),
+                    .height(100.dp)
+                    .clickable {
+                        navController.navigate(NavRouter.SeatSelector.route)
+                    },
                 travelTransportType = currentTravel
             )
         }
