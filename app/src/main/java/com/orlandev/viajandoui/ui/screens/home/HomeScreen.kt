@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.TripOrigin
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.material3.*
+import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -309,6 +310,11 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(10.dp)
+                            .clickable {
+                                scope.launch {
+                                    backdropState.reveal()
+                                }
+                            }
                         //  .background(MaterialTheme.colorScheme.background)
                     ) {
                         Box(
@@ -323,19 +329,33 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                 }
                 items(listOfRoutes.sortedBy { it }
                     .filter { it != origin && it != destiny }) { route ->
-                    Text(modifier = Modifier.clickable {
+                    Card(
+                        colors = cardColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(2.dp)
+                            .clickable {
 
-                        if (selection.value == PasajeSelection.ORIGIN) {
-                            setOrigin(route)
+                                if (selection.value == PasajeSelection.ORIGIN) {
+                                    setOrigin(route)
 
-                        } else {
-                            setDestiny(route)
-                        }
+                                } else {
+                                    setDestiny(route)
+                                }
 
-                        scope.launch {
-                            backdropState.reveal()
-                        }
-                    }, text = route)
+                                scope.launch {
+                                    backdropState.reveal()
+                                }
+                            }
+                    ) {
+                        Text(modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp)
+                            , text = route
+                        )
+                    }
                 }
             }
         }
