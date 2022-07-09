@@ -52,7 +52,9 @@ fun SearchTravelsScreen(
         haveData.value = true
     }
 
-
+    val pageFilterSelected = rememberSaveable {
+        mutableStateOf(0)
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -69,7 +71,7 @@ fun SearchTravelsScreen(
         }
 
         item {
-            TravelTabs()
+            TravelTabs(pageFilterSelected)
         }
 
         item {
@@ -93,22 +95,9 @@ fun SearchTravelsScreen(
 }
 
 
-
-@Preview(showBackground = true)
-@Composable
-fun TravelTabsPreview() {
-    ViajandoUITheme {
-        TravelTabs()
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TravelTabs() {
-
-    val selected = rememberSaveable {
-        mutableStateOf(0)
-    }
+fun TravelTabs(selected: MutableState<Int>) {
 
     OutlinedCard(
         modifier = Modifier
