@@ -91,7 +91,6 @@ fun SearchTravelsScreen(
 
         item {
             TravelTabs(filterTravel)
-
         }
 
         item {
