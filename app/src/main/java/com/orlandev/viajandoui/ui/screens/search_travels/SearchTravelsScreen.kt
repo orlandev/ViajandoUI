@@ -36,7 +36,7 @@ import com.orlandev.viajandoui.utils.RandomTime
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTravelsScreen(
     navController: NavController, sharedViewModel: SharedViewModel
@@ -96,6 +96,46 @@ fun SearchTravelsScreen(
 
         item {
             Spacer(modifier = Modifier.height(10.dp))
+        }
+
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(Icons.Default.DoubleArrow, contentDescription = null)
+
+                    Text(
+                        text = "No hay disponibilidad para el dia ${travelData.value?.dateIda}"
+                    )
+                }
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Divider(modifier = Modifier.weight(1f))
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    text = "Sugerencias"
+                )
+
+                Divider(modifier = Modifier.weight(1f))
+
+            }
         }
 
         items(travelT.filter { it == filterTravel.value }) { currentTravel ->
