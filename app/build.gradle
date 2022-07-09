@@ -8,6 +8,10 @@ plugins {
 android {
     compileSdk rootProject.compileSdk
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
     defaultConfig {
         applicationId "com.orlandev.viajandoui"
         minSdk rootProject.minSdk
