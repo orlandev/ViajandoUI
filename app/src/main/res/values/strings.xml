@@ -40,4 +40,6 @@
     <string name="train_name">Tren</string>
     <string name="button_text_acept">Aceptar</string>
     <string name="error_data_empty_in_new_booking">Debes especificar todos los datos para hacer una correcta busqueda.</string>
+    <string name="travel_sugestions">Sugerencias</string>
+    <string name="travel_not_avaliable">No hay disponibilidad para el día</string>
 </resources>

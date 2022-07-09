@@ -113,7 +113,7 @@ fun SearchTravelsScreen(
                     Icon(Icons.Default.DoubleArrow, contentDescription = null)
 
                     Text(
-                        text = "No hay disponibilidad para el dia ${travelData.value?.dateIda}"
+                        text = stringResource(id = R.string.travel_not_avaliable) + " ${travelData.value?.dateIda}"
                     )
                 }
             }
@@ -130,7 +130,7 @@ fun SearchTravelsScreen(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = "Sugerencias"
+                    text = stringResource(id = R.string.travel_sugestions)
                 )
 
                 Divider(modifier = Modifier.weight(1f))
@@ -138,11 +138,12 @@ fun SearchTravelsScreen(
             }
         }
 
-        items(travelT.filter { it == filterTravel.value }) { currentTravel ->
+        items(travelT.filter { it == filterTravel.value }, key = { it }) { currentTravel ->
             TravelCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp), travelTransportType = currentTravel
+                    .height(100.dp),
+                travelTransportType = currentTravel
             )
         }
 
