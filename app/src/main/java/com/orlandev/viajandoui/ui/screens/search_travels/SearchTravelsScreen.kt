@@ -2,6 +2,7 @@ package com.orlandev.viajandoui.ui.screens.search_travels
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -50,44 +52,46 @@ fun SearchTravelsScreen(
         haveData.value = true
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        travelData.value?.let { searchDataTravel ->
-            TravelHeader(searchDataTravel)
+
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+
+        item {
+
+            travelData.value?.let { searchDataTravel ->
+                TravelHeader(searchDataTravel)
+            }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        item {
+            TravelTabs()
+        }
 
-        TravelTabs()
-
-        Spacer(modifier = Modifier.height(2.dp))
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
+        item {
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+        items(10) {
+            val travelT = when (Random.nextInt(0, 4)) {
+                0 -> TravelTransportType.Airplane
+                1 -> TravelTransportType.Boat
+                2 -> TravelTransportType.Train
+                3 -> TravelTransportType.Bus
+                else -> TravelTransportType.Airplane
             }
-            items(10) {
-                val travelT = when (Random.nextInt(0, 4)) {
-                    0 -> TravelTransportType.Airplane
-                    1 -> TravelTransportType.Boat
-                    2 -> TravelTransportType.Train
-                    3 -> TravelTransportType.Bus
-                    else -> TravelTransportType.Airplane
-                }
-                TravelCard(travelTransportType = travelT)
-            }
+            TravelCard(travelTransportType = travelT)
+        }
 
-            item {
-                Spacer(modifier = Modifier.height(50.dp))
-            }
+        item {
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
-
 }
+
 
 
 @Preview(showBackground = true)
@@ -101,11 +105,15 @@ fun TravelTabsPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TravelTabs() {
+
+    val selected = rememberSaveable {
+        mutableStateOf(0)
+    }
+
     OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .padding(horizontal = 16.dp),
+            .height(60.dp),
     ) {
         Row(
             modifier = Modifier
@@ -117,35 +125,65 @@ fun TravelTabs() {
             TravelTab(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(1f),
+                    .weight(1f)
+                    .clickable {
+                        selected.value = 0
+                    },
+                icon = R.drawable.ic_all,
+                selected = selected.value == 0,
+            )
+            TravelTab(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .clickable {
+                        selected.value = 1
+                    },
                 icon = R.drawable.ic_bus,
+                selected = selected.value == 1,
+            )
+            TravelTab(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .clickable {
+                        selected.value = 2
+                    },
+                icon = R.drawable.ic_train,
+                selected = selected.value == 2,
 
                 )
             TravelTab(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(1f),
-                icon = R.drawable.ic_train,
-                selected = true
-            )
-            TravelTab(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f),
+                    .weight(1f)
+                    .clickable {
+                        selected.value = 3
+                    },
                 icon = R.drawable.ic_boat,
+                selected = selected.value == 3,
             )
             TravelTab(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(1f),
+                    .weight(1f)
+                    .clickable {
+                        selected.value = 4
+                    },
                 icon = R.drawable.ic_airplane,
+                selected = selected.value == 4,
             )
         }
     }
 }
 
+
 @Composable
-fun TravelTab(modifier: Modifier = Modifier, @DrawableRes icon: Int, selected: Boolean = false) {
+fun TravelTab(
+    modifier: Modifier = Modifier,
+    @DrawableRes icon: Int,
+    selected: Boolean = false
+) {
 
     val iconTint =
         if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
@@ -169,15 +207,14 @@ fun TravelHeader(travelData: SearchTravelModel? = null) {
             containerColor = MaterialTheme.colorScheme.background
         ),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 8.dp,
+
                     vertical = 4.dp
                 ),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -245,7 +282,7 @@ fun TravelHeader(travelData: SearchTravelModel? = null) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -292,15 +329,6 @@ fun TravelHeader(travelData: SearchTravelModel? = null) {
                 )
             }
         }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun TravelHeaderPreview() {
-    ViajandoUITheme {
-        TravelHeader()
     }
 }
 
@@ -406,7 +434,13 @@ fun TravelCardPreview() {
 }
 
 
-
+@Preview(showBackground = true)
+@Composable
+fun TravelHeaderPreview() {
+    ViajandoUITheme {
+        TravelHeader()
+    }
+}
 
 
 
