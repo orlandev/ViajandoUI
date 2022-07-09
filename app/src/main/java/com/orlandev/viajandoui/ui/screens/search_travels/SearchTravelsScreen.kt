@@ -1,16 +1,21 @@
 package com.orlandev.viajandoui.ui.screens.search_travels
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CompareArrows
 import androidx.compose.material.icons.filled.DoubleArrow
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.*
+import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,33 +50,113 @@ fun SearchTravelsScreen(
         haveData.value = true
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-
+    Column(modifier = Modifier.fillMaxSize()) {
         travelData.value?.let { searchDataTravel ->
+            TravelHeader(searchDataTravel)
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        TravelTabs()
+
+        Spacer(modifier = Modifier.height(2.dp))
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             item {
-                TravelHeader(searchDataTravel)
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+            items(10) {
+                val travelT = when (Random.nextInt(0, 4)) {
+                    0 -> TravelTransportType.Airplane
+                    1 -> TravelTransportType.Boat
+                    2 -> TravelTransportType.Train
+                    3 -> TravelTransportType.Bus
+                    else -> TravelTransportType.Airplane
+                }
+                TravelCard(travelTransportType = travelT)
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(50.dp))
             }
         }
+    }
 
-        items(10) {
-            val travelT = when (Random.nextInt(0, 4)) {
-                0 -> TravelTransportType.Airplane
-                1 -> TravelTransportType.Boat
-                2 -> TravelTransportType.Train
-                3 -> TravelTransportType.Bus
-                else -> TravelTransportType.Airplane
-            }
-            TravelCard(travelTransportType = travelT)
-        }
+}
 
-        item {
-            Spacer(modifier = Modifier.height(50.dp))
+
+@Preview(showBackground = true)
+@Composable
+fun TravelTabsPreview() {
+    ViajandoUITheme {
+        TravelTabs()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TravelTabs() {
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp)
+            .padding(horizontal = 16.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            TravelTab(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                icon = R.drawable.ic_bus,
+
+                )
+            TravelTab(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                icon = R.drawable.ic_train,
+                selected = true
+            )
+            TravelTab(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                icon = R.drawable.ic_boat,
+            )
+            TravelTab(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                icon = R.drawable.ic_airplane,
+            )
         }
+    }
+}
+
+@Composable
+fun TravelTab(modifier: Modifier = Modifier, @DrawableRes icon: Int, selected: Boolean = false) {
+
+    val iconTint =
+        if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground
+    val backgroundColor =
+        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+    Box(modifier = modifier.background(backgroundColor), contentAlignment = Alignment.Center) {
+        Icon(
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            tint = iconTint
+        )
     }
 
 }
@@ -79,71 +164,137 @@ fun SearchTravelsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TravelHeader(travelData: SearchTravelModel? = null) {
-
-    Card(modifier = Modifier.fillMaxWidth()) {
+    Card(
+        colors = cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        shape = RoundedCornerShape(0.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(
+                    horizontal = 8.dp,
+                    vertical = 4.dp
+                ),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = travelData?.origin ?: " - ",
-                style = MaterialTheme.typography.titleMedium
-            )
 
-            if (travelData?.travelType == TravelType.SOLO_IDA)
-                Icon(Icons.Default.DoubleArrow, contentDescription = null)
-            else
-                Icon(Icons.Default.CompareArrows, contentDescription = null)
-
-            Text(
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.End,
-                text = travelData?.destiny ?: " - ",
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-
-        //TODO Refactor this component
-        if (travelData?.dateIdaYRegreso != null && travelData.dateIdaYRegreso.isNotEmpty()) {
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .weight(2f)
+                    .height(60.dp)
             ) {
                 Text(
-                    modifier = Modifier.weight(1f),
-                    text = travelData.dateIda ?: " - ",
-                    style = MaterialTheme.typography.titleMedium
+                    text = stringResource(id = R.string.origin_text),
+                    style = MaterialTheme.typography.labelSmall
                 )
-
-                if (travelData.travelType == TravelType.SOLO_IDA)
-                    Icon(Icons.Default.DoubleArrow, contentDescription = null)
-                else
-                    Icon(Icons.Default.CompareArrows, contentDescription = null)
-
                 Text(
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.End,
-                    text = travelData.dateIdaYRegreso,
+                    text = travelData?.origin ?: " - ",
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-        } else {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                text = travelData?.dateIda ?: " - ",
-                style = MaterialTheme.typography.titleMedium
+
+            Spacer(
+                modifier = Modifier
+                    .width(8.dp)
+                    .weight(1f)
             )
+
+            Column(
+                modifier = Modifier
+                    .weight(2f)
+                    .height(60.dp), horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = stringResource(id = R.string.destiny_text),
+                    style = MaterialTheme.typography.labelSmall
+                )
+                Text(
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.End,
+                    text = travelData?.destiny ?: " - ",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+        }
+
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            if (travelData?.travelType == TravelType.SOLO_IDA)
+                Icon(Icons.Default.DoubleArrow, contentDescription = null)
+            else {
+                Row(modifier = Modifier) {
+                    Icon(
+                        Icons.Default.DoubleArrow,
+                        modifier = Modifier.rotate(180f),
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Icon(Icons.Default.DoubleArrow, contentDescription = null)
+                }
+            }
+        }
+
+        //TODO Refactor this component
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp)
+            ) {
+                Text(text = "Ida", style = MaterialTheme.typography.labelSmall)
+                Text(
+                    modifier = Modifier.fillMaxSize(),
+                    text = travelData?.dateIda ?: "Sin definir",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            /*  if (travelData.travelType == TravelType.SOLO_IDA)
+                  Icon(Icons.Default.DoubleArrow, contentDescription = null)
+              else {
+                  Row(modifier = Modifier) {
+                      Icon(
+                          Icons.Default.DoubleArrow,
+                          modifier = Modifier.rotate(180f),
+                          contentDescription = null
+                      )
+                      Spacer(modifier = Modifier.width(10.dp))
+                      Icon(Icons.Default.DoubleArrow, contentDescription = null)
+                  }
+              }*/
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(text = "Regreso", style = MaterialTheme.typography.labelSmall)
+                Text(
+                    modifier = Modifier.fillMaxSize(),
+                    textAlign = TextAlign.End,
+                    text = travelData?.dateIdaYRegreso?.ifEmpty { "Sin definir" }
+                        ?: "Sin definir",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         }
     }
-
 }
+
 
 @Preview(showBackground = true)
 @Composable
