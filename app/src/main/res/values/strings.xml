@@ -42,4 +42,6 @@
     <string name="error_data_empty_in_new_booking">Debes especificar todos los datos para hacer una correcta busqueda.</string>
     <string name="travel_sugestions">Sugerencias</string>
     <string name="travel_not_avaliable">No hay disponibilidad para el día</string>
+    <string name="text_seat_selectior_variant_1">Seleccion de Asientos Variante 1</string>
+    <string name="text_seat_selector_variant_2">Seleccion de Asientos Variante 2</string>
 </resources>

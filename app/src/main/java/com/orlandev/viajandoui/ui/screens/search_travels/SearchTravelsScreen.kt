@@ -30,11 +30,11 @@ import com.orlandev.viajandoui.model.TravelTransportType
 import com.orlandev.viajandoui.model.TravelType
 import com.orlandev.viajandoui.navigation.NavRouter
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
-import com.orlandev.viajandoui.utils.RandomChairs
-import com.orlandev.viajandoui.utils.RandomCities
-import com.orlandev.viajandoui.utils.RandomPrice
-import com.orlandev.viajandoui.utils.RandomTime
-import kotlinx.coroutines.delay
+import com.orlandev.viajandoui.utils.randomChairs
+import com.orlandev.viajandoui.utils.randomCities
+import com.orlandev.viajandoui.utils.randomPrice
+import com.orlandev.viajandoui.utils.randomTime
+
 import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -71,7 +71,7 @@ fun SearchTravelsScreen(
                 }
             )
         }
-        delay(1500)
+        //   delay(1500)
         haveData.value = true
 
     }
@@ -394,9 +394,9 @@ fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
-                Text(text = RandomTime(), style = MaterialTheme.typography.labelSmall)
+                Text(text = Random.randomTime(), style = MaterialTheme.typography.labelSmall)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = RandomTime(), style = MaterialTheme.typography.labelSmall)
+                Text(text = Random.randomTime(), style = MaterialTheme.typography.labelSmall)
 
             }
             Column(
@@ -437,9 +437,9 @@ fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
-                Text(text = RandomCities())
+                Text(text = Random.randomCities())
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = RandomCities())
+                Text(text = Random.randomCities())
 
             }
             Column(
@@ -453,11 +453,11 @@ fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
             ) {
 
                 Row(modifier = Modifier) {
-                    Text(text = RandomChairs())
+                    Text(text = Random.randomChairs())
                     Icon(painterResource(id = R.drawable.ic_seat), contentDescription = null)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = RandomPrice())
+                Text(text = Random.randomPrice())
 
             }
         }
