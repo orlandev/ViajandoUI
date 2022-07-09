@@ -1,10 +1,12 @@
 package com.orlandev.viajandoui.ui.screens.search_travels
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DoubleArrow
@@ -12,7 +14,6 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -35,6 +36,7 @@ import com.orlandev.viajandoui.utils.RandomTime
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchTravelsScreen(
     navController: NavController, sharedViewModel: SharedViewModel
@@ -46,14 +48,31 @@ fun SearchTravelsScreen(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(Unit) {
-        //TODO Simulating Requesting server information
-        delay(1500)
-        haveData.value = true
+    val travelT = remember {
+        mutableStateListOf<TravelTransportType>()
     }
 
-    val pageFilterSelected = rememberSaveable {
-        mutableStateOf(0)
+    val filterTravel = remember {
+        mutableStateOf<TravelTransportType>(TravelTransportType.Bus)
+    }
+
+
+    LaunchedEffect(Unit) {
+        //TODO Simulating Requesting server information
+        (1..20).forEach { _ ->
+            travelT.add(
+                when (Random.nextInt(0, 4)) {
+                    0 -> TravelTransportType.Airplane
+                    1 -> TravelTransportType.Boat
+                    2 -> TravelTransportType.Train
+                    3 -> TravelTransportType.Bus
+                    else -> TravelTransportType.Airplane
+                }
+            )
+        }
+        delay(1500)
+        haveData.value = true
+
     }
 
     LazyColumn(
@@ -71,21 +90,20 @@ fun SearchTravelsScreen(
         }
 
         item {
-            TravelTabs(pageFilterSelected)
+            TravelTabs(filterTravel)
+
         }
 
         item {
             Spacer(modifier = Modifier.height(10.dp))
         }
-        items(10) {
-            val travelT = when (Random.nextInt(0, 4)) {
-                0 -> TravelTransportType.Airplane
-                1 -> TravelTransportType.Boat
-                2 -> TravelTransportType.Train
-                3 -> TravelTransportType.Bus
-                else -> TravelTransportType.Airplane
-            }
-            TravelCard(travelTransportType = travelT)
+
+        items(travelT.filter { it == filterTravel.value }) { currentTravel ->
+            TravelCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp), travelTransportType = currentTravel
+            )
         }
 
         item {
@@ -97,7 +115,7 @@ fun SearchTravelsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TravelTabs(selected: MutableState<Int>) {
+fun TravelTabs(selected: MutableState<TravelTransportType>) {
 
     OutlinedCard(
         modifier = Modifier
@@ -111,56 +129,46 @@ fun TravelTabs(selected: MutableState<Int>) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround
         ) {
+
             TravelTab(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f)
                     .clickable {
-                        selected.value = 0
-                    },
-                icon = R.drawable.ic_all,
-                selected = selected.value == 0,
-            )
-            TravelTab(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .clickable {
-                        selected.value = 1
+                        selected.value = TravelTransportType.Bus
                     },
                 icon = R.drawable.ic_bus,
-                selected = selected.value == 1,
+                selected = selected.value == TravelTransportType.Bus,
             )
             TravelTab(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f)
                     .clickable {
-                        selected.value = 2
+                        selected.value = TravelTransportType.Train
                     },
                 icon = R.drawable.ic_train,
-                selected = selected.value == 2,
-
-                )
-            TravelTab(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-                    .clickable {
-                        selected.value = 3
-                    },
-                icon = R.drawable.ic_boat,
-                selected = selected.value == 3,
+                selected = selected.value == TravelTransportType.Train,
             )
             TravelTab(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f)
                     .clickable {
-                        selected.value = 4
+                        selected.value = TravelTransportType.Boat
+                    },
+                icon = R.drawable.ic_boat,
+                selected = selected.value == TravelTransportType.Boat,
+            )
+            TravelTab(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                    .clickable {
+                        selected.value = TravelTransportType.Airplane
                     },
                 icon = R.drawable.ic_airplane,
-                selected = selected.value == 4,
+                selected = selected.value == TravelTransportType.Airplane,
             )
         }
     }
@@ -324,12 +332,10 @@ fun TravelHeader(travelData: SearchTravelModel? = null) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TravelCard(travelTransportType: TravelTransportType) {
+fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
+        modifier = modifier,
     ) {
         Row(
             modifier = Modifier
@@ -411,14 +417,6 @@ fun TravelCard(travelTransportType: TravelTransportType) {
 
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TravelCardPreview() {
-    ViajandoUITheme {
-        TravelCard(TravelTransportType.Train)
     }
 }
 
