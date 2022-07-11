@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
+import androidx.compose.material3.BottomAppBarDefaults.floatingActionButtonElevation
 import androidx.compose.material3.IconButtonDefaults.iconButtonColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -115,7 +116,11 @@ fun SeatModernVariantScreen(
             modifier = Modifier.fillMaxSize(),
             floatingActionButton = {
                 ExtendedFloatingActionButton(
-                    modifier = Modifier.animateContentSize(),
+                    elevation = floatingActionButtonElevation(
+                        defaultElevation = 2.dp,
+                        ),
+                    modifier = Modifier
+                        .animateContentSize(),
                     onClick = { /*TODO*/ }) {
                     Icon(Icons.Default.Payment, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))

@@ -49,4 +49,5 @@
     <string name="name_lastname">Nombre y Apellidos</string>
     <string name="seat_avalaible">Asientos disponibles</string>
     <string name="passengers">Pasajeros</string>
+    <string name="passenge">Pasajes</string>
 </resources>

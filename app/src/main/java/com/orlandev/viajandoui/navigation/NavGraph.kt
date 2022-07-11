@@ -241,7 +241,7 @@ fun NavGraph(navController: NavHostController, sharedViewModel: SharedViewModel 
                     composable(
                         route = NavRouter.SeatSelector.route,
                     ) {
-                        appBarTitle = "Seleccione sus Asientos"
+                        appBarTitle = stringResource(id = R.string.passenge)
                         SeatSelectorScreen(
                             navController = navController,
                             sharedViewModel = sharedViewModel
