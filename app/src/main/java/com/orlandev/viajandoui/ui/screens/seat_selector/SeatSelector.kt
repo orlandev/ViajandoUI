@@ -1,29 +1,34 @@
 package com.orlandev.viajandoui.ui.screens.seat_selector
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.IconButtonDefaults.iconButtonColors
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.SharedViewModel
+import com.orlandev.viajandoui.ui.screens.search_travels.TravelCard
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
-import com.orlandev.viajandoui.utils.randomChairs
-import kotlin.random.Random
 
 sealed class SeatScreenVariants() {
     object SeatSelectorVariant : SeatScreenVariants()
@@ -48,7 +53,10 @@ fun SeatSelectorScreen(navController: NavController, sharedViewModel: SharedView
             SeatLegacyVariantScreen()
         }
         SeatScreenVariants.SeatModernVariant -> {
-            SeatModernVariantScreen()
+            SeatModernVariantScreen(
+                navController = navController,
+                sharedViewModel = sharedViewModel
+            )
         }
     }
 }
@@ -73,137 +81,219 @@ fun SeatLegacyVariantPreview() {
 @Composable
 fun SeatModernVariantPreview() {
     ViajandoUITheme {
-        SeatModernVariantScreen()
+        SeatModernVariantScreen(null)
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun SeatModernVariantScreen() {
+fun SeatModernVariantScreen(
+    navController: NavController?,
+    sharedViewModel: SharedViewModel? = null
+) {
 
-    val seatAvailables = Random.randomChairs()
     val cantPassangers = remember {
         mutableStateOf(1)
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
+    val passage = sharedViewModel?.currentPassage?.collectAsState()
 
-        item {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Text(
-                        text = "Asientos disponibles",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+    val paymentCount = remember {
+        mutableStateOf(0)
+    }
 
-                    Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-                        Icon(painterResource(id = R.drawable.ic_seat), contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = seatAvailables, style = MaterialTheme.typography.titleLarge)
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Pasajeros",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Row(
-                        modifier = Modifier.width(120.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-
-                        IconButton(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .weight(4f)
-                                .padding(end = 4.dp),
-                            onClick = {
-                                if (cantPassangers.value > 1) {
-                                    cantPassangers.value--
-                                }
-                            }) {
-                            Icon(
-                                Icons.Filled.Remove,
-                                contentDescription = null,
-                            )
-
-                        }
-
-                        AnimatedContent(
-                            modifier = Modifier.weight(4f),
-                            targetState = cantPassangers.value,
-                            transitionSpec = {
-                                // Compare the incoming number with the previous number.
-                                if (targetState > initialState) {
-                                    // If the target number is larger, it slides up and fades in
-                                    // while the initial (smaller) number slides up and fades out.
-                                    slideInVertically(
-                                        initialOffsetY = { height -> height }) + fadeIn() with
-                                            slideOutVertically(targetOffsetY = { height -> -height }) + fadeOut()
-                                } else {
-                                    // If the target number is smaller, it slides down and fades in
-                                    // while the initial number slides down and fades out.
-                                    slideInVertically(initialOffsetY = { height -> -height }) + fadeIn() with
-                                            slideOutVertically(targetOffsetY = { height -> height }) + fadeOut()
-                                }.using(
-                                    // Disable clipping since the faded slide-in/out should
-                                    // be displayed out of bounds.
-                                    SizeTransform(clip = false)
-                                )
-                            }
-                        ) { targetCount ->
-                            Text(
-                                text = "$targetCount",
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.weight(2f)
-                            )
-                        }
-
-                        IconButton(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .weight(4f)
-                                .padding(end = 4.dp),
-                            onClick = {
-                                cantPassangers.value++
-                            }) {
-                            Icon(
-                                Icons.Filled.Add,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                }
-
-
-            }
-        }
-        for (i in 1..cantPassangers.value) {
-            item {
-                PassengerForm(id = i)
-            }
+    LaunchedEffect(cantPassangers.value) {
+        passage?.value?.let { currentPassage ->
+            paymentCount.value = currentPassage.price * cantPassangers.value
         }
     }
+
+    passage?.value?.let { currentPassage ->
+
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    modifier = Modifier.animateContentSize(),
+                    onClick = { /*TODO*/ }) {
+                    Icon(Icons.Default.Payment, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "$${paymentCount.value}.00")
+                }
+            },
+            floatingActionButtonPosition = FabPosition.End
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(PaddingValues(horizontal = 16.dp)),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+
+                item {
+                    TravelCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        passage = currentPassage,
+                    )
+                }
+
+                item {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
+                        ) {
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.seat_avalaible),
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+
+                                Row(
+                                    modifier = Modifier,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Icon(
+                                        painterResource(id = R.drawable.ic_seat),
+                                        contentDescription = null
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = currentPassage.cantSeatsAvailable.toString(),
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+                                }
+                            }
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.passengers),
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Row(
+                                    modifier = Modifier.width(130.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+
+                                    IconButton(
+                                        enabled = cantPassangers.value > 1,
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .size(40.dp),
+                                        colors = iconButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                                            containerColor = MaterialTheme.colorScheme.primary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(
+                                                alpha = 0.5f
+                                            ),
+                                        ),
+                                        onClick = {
+                                            if (cantPassangers.value > 1) {
+                                                cantPassangers.value--
+                                            }
+                                        }) {
+                                        Icon(
+                                            Icons.Filled.Remove,
+                                            contentDescription = null,
+                                        )
+                                    }
+
+                                    AnimatedContent(
+                                        modifier = Modifier.weight(4f),
+                                        targetState = cantPassangers.value,
+                                        transitionSpec = {
+                                            // Compare the incoming number with the previous number.
+                                            if (targetState > initialState) {
+                                                // If the target number is larger, it slides up and fades in
+                                                // while the initial (smaller) number slides up and fades out.
+                                                slideInVertically(
+                                                    initialOffsetY = { height -> height }) + fadeIn() with
+                                                        slideOutVertically(targetOffsetY = { height -> -height }) + fadeOut()
+                                            } else {
+                                                // If the target number is smaller, it slides down and fades in
+                                                // while the initial number slides down and fades out.
+                                                slideInVertically(initialOffsetY = { height -> -height }) + fadeIn() with
+                                                        slideOutVertically(targetOffsetY = { height -> height }) + fadeOut()
+                                            }.using(
+                                                // Disable clipping since the faded slide-in/out should
+                                                // be displayed out of bounds.
+                                                SizeTransform(clip = false)
+                                            )
+                                        }
+                                    ) { targetCount ->
+                                        Text(
+                                            text = "$targetCount",
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.weight(2f),
+                                            style = MaterialTheme.typography.titleLarge
+                                        )
+                                    }
+
+                                    IconButton(
+                                        enabled = cantPassangers.value < (passage.value?.cantSeatsAvailable
+                                            ?: 2),
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .size(40.dp),
+                                        colors = iconButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.onPrimary,
+                                            containerColor = MaterialTheme.colorScheme.primary,
+                                            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(
+                                                alpha = 0.5f
+                                            ),
+                                        ),
+                                        onClick = {
+                                            if (cantPassangers.value < (passage.value?.cantSeatsAvailable
+                                                    ?: 2)
+                                            ) {
+                                                cantPassangers.value++
+                                            }
+                                        }) {
+                                        Icon(
+                                            Icons.Filled.Add,
+                                            contentDescription = null,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                for (i in 1..cantPassangers.value) {
+                    item {
+                        PassengerForm(id = i)
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
+            }
+        }
+
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -218,21 +308,48 @@ fun PassengerForm(id: Int) {
     }
     Card(modifier = Modifier.fillMaxWidth()) {
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
         ) {
-            Text(text = "Pasajero $id")
-            Icon(Icons.Default.QrCodeScanner, contentDescription = null)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = stringResource(id = R.string.passenger) + "$id")
+                Icon(Icons.Default.QrCodeScanner, contentDescription = null)
+            }
+
+
+
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                label = { Text(text = stringResource(id = R.string.name_lastname)) },
+                value = name,
+                onValueChange = setName
+            )
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                ),
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.user_ci)
+                    )
+                },
+                value = ci, onValueChange = setCI
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
-        TextField(
-            label = { Text(text = "Nombre y Apellidos") },
-            value = name,
-            onValueChange = setName
-        )
-        TextField(label = { Text(text = "No. identificación") }, value = ci, onValueChange = setCI)
 
     }
 

@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DoubleArrow
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.runtime.*
@@ -25,16 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.SharedViewModel
+import com.orlandev.viajandoui.model.Passage
 import com.orlandev.viajandoui.model.SearchTravelModel
 import com.orlandev.viajandoui.model.TravelTransportType
 import com.orlandev.viajandoui.model.TravelType
 import com.orlandev.viajandoui.navigation.NavRouter
 import com.orlandev.viajandoui.ui.theme.ViajandoUITheme
-import com.orlandev.viajandoui.utils.randomChairs
-import com.orlandev.viajandoui.utils.randomCities
-import com.orlandev.viajandoui.utils.randomPrice
-import com.orlandev.viajandoui.utils.randomTime
-
+import com.orlandev.viajandoui.utils.TravelLeftRoute
+import com.orlandev.viajandoui.utils.randomPassage
 import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -49,8 +46,8 @@ fun SearchTravelsScreen(
         mutableStateOf(false)
     }
 
-    val travelT = remember {
-        mutableStateListOf<TravelTransportType>()
+    val passagesAvailable = remember {
+        mutableStateListOf<Passage>()
     }
 
     val filterTravel = remember {
@@ -61,14 +58,8 @@ fun SearchTravelsScreen(
     LaunchedEffect(Unit) {
         //TODO Simulating Requesting server information
         (1..20).forEach { _ ->
-            travelT.add(
-                when (Random.nextInt(0, 4)) {
-                    0 -> TravelTransportType.Airplane
-                    1 -> TravelTransportType.Boat
-                    2 -> TravelTransportType.Train
-                    3 -> TravelTransportType.Bus
-                    else -> TravelTransportType.Airplane
-                }
+            passagesAvailable.add(
+                Random.randomPassage()
             )
         }
         //   delay(1500)
@@ -138,15 +129,17 @@ fun SearchTravelsScreen(
             }
         }
 
-        items(travelT.filter { it == filterTravel.value }) { currentTravel ->
+        items(passagesAvailable.filter { it.transportType == filterTravel.value }) { currentPassage ->
             TravelCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
                     .clickable {
+
+                        sharedViewModel.onSetPassage(currentPassage)
                         navController.navigate(NavRouter.SeatSelector.route)
                     },
-                travelTransportType = currentTravel
+                passage = currentPassage
             )
         }
 
@@ -376,8 +369,7 @@ fun TravelHeader(travelData: SearchTravelModel? = null) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
-
+fun TravelCard(modifier: Modifier, passage: Passage) {
     Card(
         modifier = modifier,
     ) {
@@ -394,41 +386,19 @@ fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
-                Text(text = Random.randomTime(), style = MaterialTheme.typography.labelSmall)
+                Text(text = passage.startTime, style = MaterialTheme.typography.labelSmall)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = Random.randomTime(), style = MaterialTheme.typography.labelSmall)
+                Text(text = passage.arriveTime, style = MaterialTheme.typography.labelSmall)
 
             }
-            Column(
+            TravelLeftRoute(
                 modifier = Modifier
                     .fillMaxHeight()
                     .wrapContentWidth()
                     .padding(2.dp)
                     .weight(1f),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    painterResource(id = travelTransportType.icon),
-                    contentDescription = null,
-                    modifier = Modifier.weight(
-                        2f
-                    )
-                )
-                Divider(
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .height(40.dp)
-                        .width(1.dp)
-                )
-                Icon(
-                    Icons.Outlined.LocationOn,
-                    contentDescription = null,
-                    modifier = Modifier.weight(
-                        2f
-                    )
-                )
-            }
+                icon = passage.transportType.icon
+            )
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -437,9 +407,9 @@ fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
                 verticalArrangement = Arrangement.SpaceAround
             ) {
 
-                Text(text = Random.randomCities())
+                Text(text = passage.origen)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = Random.randomCities())
+                Text(text = passage.destiny)
 
             }
             Column(
@@ -453,17 +423,16 @@ fun TravelCard(modifier: Modifier, travelTransportType: TravelTransportType) {
             ) {
 
                 Row(modifier = Modifier) {
-                    Text(text = Random.randomChairs())
+                    Text(text = passage.cantSeatsAvailable.toString())
                     Icon(painterResource(id = R.drawable.ic_seat), contentDescription = null)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = Random.randomPrice())
+                Text(text = "$${passage.price}.00")
 
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

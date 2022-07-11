@@ -1,6 +1,6 @@
 package com.orlandev.viajandoui.model
 
-enum class PasajeSelection {
+enum class PassageSelection {
     ORIGIN,
     DESTINY
 }

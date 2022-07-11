@@ -44,4 +44,9 @@
     <string name="travel_not_avaliable">No hay disponibilidad para el día</string>
     <string name="text_seat_selectior_variant_1">Seleccion de Asientos Variante 1</string>
     <string name="text_seat_selector_variant_2">Seleccion de Asientos Variante 2</string>
+    <string name="passenger">" Pasajero "</string>
+    <string name="user_ci">No. identificación</string>
+    <string name="name_lastname">Nombre y Apellidos</string>
+    <string name="seat_avalaible">Asientos disponibles</string>
+    <string name="passengers">Pasajeros</string>
 </resources>

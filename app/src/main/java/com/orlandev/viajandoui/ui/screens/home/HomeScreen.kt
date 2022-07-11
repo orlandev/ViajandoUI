@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.orlandev.viajandoui.R
 import com.orlandev.viajandoui.SharedViewModel
-import com.orlandev.viajandoui.model.PasajeSelection
+import com.orlandev.viajandoui.model.PassageSelection
 import com.orlandev.viajandoui.model.SearchTravelModel
 import com.orlandev.viajandoui.model.TravelType
 import com.orlandev.viajandoui.navigation.NavRouter
@@ -77,7 +77,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
     val scope = rememberCoroutineScope()
 
     val selection = remember {
-        mutableStateOf(PasajeSelection.ORIGIN)
+        mutableStateOf(PassageSelection.ORIGIN)
     }
 
     val (origin, setOrigin) = remember {
@@ -182,7 +182,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                             ) {
                                 IconTextSelector(text = origin.ifEmpty { stringResource(id = R.string.origin_text) }) {
                                     scope.launch {
-                                        selection.value = PasajeSelection.ORIGIN
+                                        selection.value = PassageSelection.ORIGIN
                                         backdropState.conceal()
                                     }
                                 }
@@ -194,7 +194,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                                             id = R.string.destiny_text
                                         )
                                     }) {
-                                    selection.value = PasajeSelection.DESTINY
+                                    selection.value = PassageSelection.DESTINY
                                     scope.launch {
                                         backdropState.conceal()
                                     }
@@ -338,7 +338,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                             .padding(2.dp)
                             .clickable {
 
-                                if (selection.value == PasajeSelection.ORIGIN) {
+                                if (selection.value == PassageSelection.ORIGIN) {
                                     setOrigin(route)
 
                                 } else {
